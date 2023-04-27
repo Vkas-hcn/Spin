@@ -40,6 +40,12 @@ object SpinTbaUtils {
         baDetailBean: MAd? = null
     ): JSONObject {
         return JSONObject().apply {
+            if (isAd) {
+                val bubbleLoadCity = baDetailBean?.spin_load_city ?: "null"
+                val bubbleShowCity = baDetailBean?.spin_show_city ?: "null"
+                put("r_city~connally", bubbleLoadCity)
+                put("s_city~connally", bubbleShowCity)
+            }
             put("brink", JSONObject().apply {
                 //network_type
                 put(
@@ -98,12 +104,7 @@ object SpinTbaUtils {
                 put("barrage", DeviceUtils.getManufacturer())//手机厂商，huawei、oppo
                 //brand
                 put("nobody", "")//品牌
-                if (isAd) {
-                    val bubbleLoadCity = baDetailBean?.spin_load_city ?: "null"
-                    val bubbleShowCity = baDetailBean?.spin_show_city ?: "null"
-                    put("r_city~connally", bubbleLoadCity)
-                    put("s_city~connally", bubbleShowCity)
-                }
+
             })
         }
     }
