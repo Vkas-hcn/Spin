@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="m"
+            type="com.spin.secure.main.SpinViewModel" />
+    </data>
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/gradient_splash">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="324dp"
+                android:layout_gravity="bottom"
+                android:scaleType="fitXY"
+                app:srcCompat="@mipmap/bottom_main" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/top_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:paddingStart="21dp"
+                    android:paddingEnd="21dp">
+
+                    <androidx.constraintlayout.utils.widget.ImageFilterView
+                        android:id="@+id/btn_setting"
+                        view_enable="@{m.clickable}"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:layout_centerVertical="true"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:padding="6dp"
+                        app:roundPercent="1"
+                        app:srcCompat="@drawable/ic_setting" />
+
+                    <FrameLayout
+                        android:id="@+id/btn_list"
+                        view_enable="@{m.clickable}"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:background="?android:attr/selectableItemBackgroundBorderless">
+
+                        <androidx.constraintlayout.utils.widget.ImageFilterView
+                            img_res_id="@{m.countryResId}"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/bg_country"
+                            android:padding="2dp"
+                            app:roundPercent="1"
+                            tools:src="@mipmap/fast" />
+                    </FrameLayout>
+                </RelativeLayout>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="343dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@mipmap/img_yunceng"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="21dp"
+                        android:layout_marginTop="36dp"
+                        android:gravity="center"
+                        android:text="The connection time"
+                        android:textColor="#000000"
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+                        tools:ignore="HardcodedText,SpUsage" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="33dp"
+                        android:layout_marginTop="11dp"
+                        android:gravity="center"
+                        android:text="@{m.connectionText}"
+                        android:textColor="#000000"
+                        android:textSize="26dp"
+                        android:textStyle="bold"
+                        tools:ignore="SpUsage"
+                        tools:text="00:00:00" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <FrameLayout
+                    android:id="@+id/btn_toggle"
+                    view_enable="@{m.clickable}"
+                    android:layout_width="224dp"
+                    android:layout_height="346dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="31.94dp">
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lottie"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:lottie_fileName="connecting.json"
+                        app:lottie_imageAssetsFolder="images"
+                        app:lottie_loop="true" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="190dp"
+                        android:layout_height="52dp"
+                        android:layout_gravity="center_horizontal|bottom"
+                        android:padding="2dp"
+                        app:cardBackgroundColor="#E3FFFF99"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#2E1409"
+                        app:strokeWidth="2dp">
+
+                        <ProgressBar
+                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:progress="@{m.connectProgress}"
+                            android:progressDrawable="@drawable/progress_connecting"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            tools:progress="50" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:singleLine="true"
+                            android:text="@{m.stateText}"
+                            android:textColor="#000000"
+                            android:textSize="18dp"
+                            android:textStyle="bold"
+                            android:typeface="sans"
+                            tools:ignore="SpUsage"
+                            tools:text="Connect" />
+                    </com.google.android.material.card.MaterialCardView>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/ad_root"
+                    android:layout_width="336dp"
+                    android:layout_height="152dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="28dp">
+
+                    <com.google.android.gms.ads.nativead.NativeAdView
+                        android:id="@+id/ad_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_94ffad71_8dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/ad_media_root"
+                                android:layout_width="220dp"
+                                android:layout_height="128dp"
+                                android:layout_marginLeft="12dp"
+                                app:cardBackgroundColor="@color/white"
+                                app:cardCornerRadius="4dp"
+                                app:cardElevation="0dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <com.google.android.gms.ads.nativead.MediaView
+                                    android:id="@+id/ad_media"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:layout_width="26dp"
+                                    android:layout_height="14dp"
+                                    android:background="#2E1409"
+                                    android:gravity="center"
+                                    android:text="AD"
+                                    android:textColor="@color/white"
+                                    android:textSize="8dp"
+                                    android:typeface="sans"
+                                    tools:ignore="HardcodedText,SpUsage" />
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <androidx.constraintlayout.utils.widget.ImageFilterView
+                                android:id="@+id/ad_icon"
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                app:layout_constraintLeft_toRightOf="@id/ad_media_root"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toTopOf="@id/ad_media_root"
+                                app:round="4dp"
+                                tools:src="@mipmap/ic_launcher" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/ad_body"
+                                android:layout_width="81dp"
+                                android:layout_height="36dp"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                android:maxLines="2"
+                                android:textColor="@color/white"
+                                android:textSize="12dp"
+                                app:layout_constraintBottom_toTopOf="@id/ad_action"
+                                app:layout_constraintLeft_toRightOf="@id/ad_media_root"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/ad_icon"
+                                tools:ignore="SpUsage"
+                                tools:text="Cut The Rope:MagicCut The Rope:MagicMagicMagicMagicMagicMagic" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/ad_action"
+                                android:layout_width="72dp"
+                                android:layout_height="32dp"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:paddingLeft="4dp"
+                                android:paddingRight="4dp"
+                                android:singleLine="true"
+                                android:stateListAnimator="@null"
+                                android:textColor="@color/white"
+                                android:textSize="14dp"
+                                app:backgroundTint="#2E1409"
+                                app:cornerRadius="8dp"
+                                app:layout_constraintBottom_toBottomOf="@id/ad_media_root"
+                                app:layout_constraintLeft_toRightOf="@id/ad_media_root"
+                                app:layout_constraintRight_toRightOf="parent"
+                                tools:ignore="SpUsage"
+                                tools:text="InstallInstallInstallInstall" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </com.google.android.gms.ads.nativead.NativeAdView>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/ad_cover"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@mipmap/ad_spin"
+                        tools:visibility="gone" />
+                </FrameLayout>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+            <ProgressBar
+                android:id="@+id/pro_list"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:progressBackgroundTint="@color/white"
+                android:progressTint="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </FrameLayout>
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigation_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@drawable/bg_setting"
+            app:insetForeground="@android:color/transparent">
+
+            <include
+                android:id="@+id/layout_setting"
+                layout="@layout/layout_setting" />
+        </com.google.android.material.navigation.NavigationView>
+
+    </androidx.drawerlayout.widget.DrawerLayout>
+</layout>

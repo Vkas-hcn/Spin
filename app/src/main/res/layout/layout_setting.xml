@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        tools:layout_marginEnd="72dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/logo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="44dp"
+            app:srcCompat="@mipmap/logo_fg" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_contact_us"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="16dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawablePadding="16dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="Contact us"
+            android:textColor="#000000"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@mipmap/rate"
+            tools:ignore="HardcodedText,SpUsage" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_privacy_policy"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="24dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawablePadding="16dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="Privacy Policy"
+            android:textColor="#000000"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@mipmap/privacy"
+            tools:ignore="HardcodedText,SpUsage" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_update_app"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="24dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawablePadding="16dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="Update"
+            android:textColor="#000000"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@mipmap/update"
+            tools:ignore="HardcodedText,SpUsage" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_share_app"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="24dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawablePadding="16dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="Share"
+            android:textColor="#000000"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@mipmap/share"
+            tools:ignore="HardcodedText,SpUsage" />
+
+<!--        <androidx.appcompat.widget.AppCompatTextView-->
+<!--            android:id="@+id/tv_debug"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="42dp"-->
+<!--            android:layout_marginTop="24dp"-->
+<!--            android:background="?android:attr/selectableItemBackground"-->
+<!--            android:drawablePadding="16dp"-->
+<!--            android:ellipsize="end"-->
+<!--            android:gravity="center_vertical"-->
+<!--            android:maxLines="1"-->
+<!--            android:paddingStart="20dp"-->
+<!--            android:paddingEnd="20dp"-->
+<!--            android:text="Debug"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textSize="16dp"-->
+<!--            android:textStyle="bold"-->
+<!--            app:drawableStartCompat="@mipmap/share"-->
+<!--            tools:ignore="HardcodedText,SpUsage" />-->
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

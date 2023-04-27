@@ -1,0 +1,48 @@
+{
+  "si_o": [
+    {
+      "si_comp": "admob",
+      "si_imp": 2,
+      "si_wy": "o",
+      "si_dat": "ca-app-pub-3940256099942544/3419835294"
+    },
+    {
+      "si_comp": "admob",
+      "si_imp": 1,
+      "si_wy": "i",
+      "si_dat": "ca-app-pub-3940256099942544/1033173712"
+    }
+  ],
+  "si_c": [
+    {
+      "si_comp": "admob",
+      "si_imp": 1,
+      "si_wy": "i",
+      "si_dat": "ca-app-pub-3940256099942544/1033173712"
+    }
+  ],
+  "si_h": [
+    {
+      "si_comp": "admob",
+      "si_imp": 1,
+      "si_wy": "n",
+      "si_dat": "ca-app-pub-3940256099942544/2247696110"
+    }
+  ],
+  "si_r": [
+    {
+      "si_comp": "admob",
+      "si_imp": 1,
+      "si_wy": "n",
+      "si_dat": "ca-app-pub-3940256099942544/2247696110"
+    }
+  ],
+  "si_b": [
+    {
+      "si_comp": "admob",
+      "si_imp": 1,
+      "si_wy": "i",
+      "si_dat": "ca-app-pub-3940256099942544/8691691433"
+    }
+  ]
+}

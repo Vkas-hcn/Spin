@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.spin.secure.R" />
+
+        <variable
+            name="m"
+            type="com.spin.secure.connection.result.ConnectionResultViewModel" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient_splash">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="324dp"
+            android:layout_gravity="bottom"
+            android:scaleType="fitXY"
+            app:srcCompat="@mipmap/bottom_main" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/top_layout"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_back"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_centerVertical="true"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:padding="12dp"
+                    app:srcCompat="@mipmap/back" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_centerInParent="true"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="Result"
+                    android:textColor="#000000"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    tools:ignore="HardcodedText,SpUsage" />
+            </RelativeLayout>
+
+            <FrameLayout
+                android:layout_width="344dp"
+                android:layout_height="203dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="8dp"
+                android:background="@mipmap/img_yunceng">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="333dp"
+                    android:layout_height="157dp"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:background="@drawable/bg_white_20dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <androidx.constraintlayout.utils.widget.ImageFilterView
+                        background_res_id="@{m.isConnected ? R.mipmap.country_connected : R.mipmap.country_disconnected}"
+                        img_res_id="@{m.countryResId}"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_marginTop="16dp"
+                        android:padding="4dp"
+                        tools:background="@mipmap/country_connected"
+                        tools:src="@mipmap/germany" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        str_text_color="@{m.isConnected ? `#1B8E0E` : `#DF3634`}"
+                        android:layout_width="match_parent"
+                        android:layout_height="19dp"
+                        android:layout_marginTop="12dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="@{m.isConnected ? `Connection succeed` : `Disconnection succeed`}"
+                        android:textSize="13dp"
+                        android:textStyle="bold"
+                        tools:ignore="SpUsage"
+                        tools:text="Connection succeed"
+                        tools:textColor="#1B8E0E" />
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="wrap_content"
+                        android:layout_height="37dp"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_horizontal">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            background_res_id="@{m.isConnected ? R.mipmap.unit_connected : R.mipmap.unit_disconnected}"
+                            android:layout_width="37dp"
+                            android:layout_height="37dp"
+                            android:gravity="center"
+                            android:text="@{m.hour}"
+                            android:textColor="@color/white"
+                            android:textSize="18dp"
+                            android:textStyle="bold"
+                            tools:background="@mipmap/unit_connected"
+                            tools:ignore="SpUsage"
+                            tools:text="00" />
+
+                        <View
+                            background_res_id="@{m.isConnected ? R.mipmap.divider_connected : R.mipmap.divider_disconnected}"
+                            android:layout_width="2dp"
+                            android:layout_height="9dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginEnd="6dp"
+                            tools:background="@mipmap/divider_connected" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            background_res_id="@{m.isConnected ? R.mipmap.unit_connected : R.mipmap.unit_disconnected}"
+                            android:layout_width="37dp"
+                            android:layout_height="37dp"
+                            android:gravity="center"
+                            android:text="@{m.minutes}"
+                            android:textColor="@color/white"
+                            android:textSize="18dp"
+                            android:textStyle="bold"
+                            tools:background="@mipmap/unit_connected"
+                            tools:ignore="SpUsage"
+                            tools:text="00" />
+
+                        <View
+                            background_res_id="@{m.isConnected ? R.mipmap.divider_connected : R.mipmap.divider_disconnected}"
+                            android:layout_width="2dp"
+                            android:layout_height="9dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginEnd="6dp"
+                            tools:background="@mipmap/divider_connected" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            background_res_id="@{m.isConnected ? R.mipmap.unit_connected : R.mipmap.unit_disconnected}"
+                            android:layout_width="37dp"
+                            android:layout_height="37dp"
+                            android:gravity="center"
+                            android:text="@{m.second}"
+                            android:textColor="@color/white"
+                            android:textSize="18dp"
+                            android:textStyle="bold"
+                            tools:background="@mipmap/unit_connected"
+                            tools:ignore="SpUsage"
+                            tools:text="00" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </FrameLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ad_root"
+                android:layout_width="320dp"
+                android:layout_height="328dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="40dp">
+
+                <com.google.android.gms.ads.nativead.NativeAdView
+                    android:id="@+id/ad_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_white_12dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <androidx.constraintlayout.utils.widget.ImageFilterView
+                            android:id="@+id/ad_icon"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="14dp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:round="8dp"
+                            tools:background="#FFC107" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/ad_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="22dp"
+                            android:layout_marginLeft="12dp"
+                            android:layout_marginRight="10dp"
+                            android:ellipsize="end"
+                            android:gravity="center_vertical"
+                            android:maxLines="1"
+                            android:textColor="#192340"
+                            android:textSize="14dp"
+                            android:textStyle="bold"
+                            android:typeface="sans"
+                            app:layout_constrainedWidth="true"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintHorizontal_chainStyle="packed"
+                            app:layout_constraintLeft_toRightOf="@id/ad_icon"
+                            app:layout_constraintRight_toLeftOf="@id/ad_tag"
+                            app:layout_constraintTop_toTopOf="@id/ad_icon"
+                            tools:ignore="SpUsage"
+                            tools:text="Cut the rope: MagicMagicMagicMagicMagic" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/ad_tag"
+                            android:layout_width="28dp"
+                            android:layout_height="16dp"
+                            android:layout_marginRight="12dp"
+                            android:background="@drawable/bg_2e1409_8dp"
+                            android:gravity="center"
+                            android:text="AD"
+                            android:textColor="@color/white"
+                            android:textSize="8dp"
+                            android:typeface="sans"
+                            app:layout_constraintBottom_toBottomOf="@id/ad_title"
+                            app:layout_constraintBottom_toTopOf="@id/ad_body"
+                            app:layout_constraintLeft_toRightOf="@id/ad_title"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/ad_title"
+                            app:layout_constraintVertical_chainStyle="spread"
+                            tools:ignore="HardcodedText,SpUsage" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/ad_body"
+                            android:layout_width="wrap_content"
+                            android:layout_height="18dp"
+                            android:layout_marginRight="12dp"
+                            android:ellipsize="end"
+                            android:gravity="center_vertical"
+                            android:maxLines="1"
+                            android:textColor="#192340"
+                            android:textSize="12dp"
+                            android:typeface="sans"
+                            app:layout_constrainedWidth="true"
+                            app:layout_constraintBottom_toBottomOf="@id/ad_icon"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintLeft_toLeftOf="@id/ad_title"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/ad_title"
+                            tools:ignore="SpUsage"
+                            tools:text="Press the spacebar and want to…spacebarspacebarspacebar" />
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/ad_media_root"
+                            android:layout_width="288dp"
+                            android:layout_height="182dp"
+                            android:layout_marginTop="12dp"
+                            app:cardCornerRadius="8dp"
+                            app:cardElevation="0dp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/ad_icon"
+                            tools:cardBackgroundColor="#2196F3">
+
+                            <com.google.android.gms.ads.nativead.MediaView
+                                android:id="@+id/ad_media"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/ad_action"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_marginBottom="16dp"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:paddingLeft="4dp"
+                            android:paddingRight="4dp"
+                            android:singleLine="true"
+                            android:stateListAnimator="@null"
+                            android:textColor="@color/white"
+                            android:textSize="14dp"
+                            app:backgroundTint="#2E1409"
+                            app:cornerRadius="8dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            tools:ignore="SpUsage"
+                            tools:text="InstallInstallInstallInstall" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.gms.ads.nativead.NativeAdView>
+
+                <View
+                    android:id="@+id/ad_cover"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@mipmap/ad_result"
+                    tools:visibility="gone" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </FrameLayout>
+</layout>

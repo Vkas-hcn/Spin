@@ -1,0 +1,12 @@
+<resources>
+
+    <style name="Theme.Spin" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Theme.Spin.Splash" parent="Theme.Spin">
+        <item name="android:windowBackground">@drawable/gradient_splash</item>
+    </style>
+</resources>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.spin.secure.R" />
+
+        <variable
+            name="m"
+            type="com.spin.secure.connection.list.ConnectionListAdapter.Item" />
+    </data>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        view_select="@{m.checked}"
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/item_connection"
+        android:gravity="center_vertical">
+
+        <androidx.constraintlayout.utils.widget.ImageFilterView
+            img_res_id="@{m.countryIconResId}"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="16dp"
+            app:roundPercent="1"
+            tools:src="@mipmap/fast" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="14dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@{m.name}"
+            android:textColor="@color/black"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            tools:ignore="SpUsage"
+            tools:text="Super Fast Servers" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            img_res_id="@{m.checked ? R.mipmap.checked : R.mipmap.check}"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="24dp"
+            tools:src="@mipmap/check" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

@@ -1,0 +1,68 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdk rootProject.ext.android.compileSdk
+
+    defaultConfig {
+        applicationId "com.spin.secure"
+        minSdk rootProject.ext.android.minSdk
+        targetSdk rootProject.ext.android.targetSdk
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    implementation rootProject.ext.dependencies.coreKtx
+    implementation rootProject.ext.dependencies.fragmentKtx
+    implementation rootProject.ext.dependencies.lifeCycleKtx
+    implementation rootProject.ext.dependencies.liveDataKtx
+    implementation rootProject.ext.dependencies.viewModelKtx
+    implementation rootProject.ext.dependencies.appcompat
+    implementation rootProject.ext.dependencies.material
+    implementation rootProject.ext.dependencies.constraintlayout
+    implementation rootProject.ext.dependencies.coroutines
+    implementation rootProject.ext.dependencies.lottie
+    implementation rootProject.ext.dependencies.materialDialogCore
+    implementation rootProject.ext.dependencies.materialDialogLifecycle
+//    implementation rootProject.ext.dependencies.materialDialogInput
+    implementation rootProject.ext.dependencies.adapter
+    implementation platform(rootProject.ext.dependencies.firebaseBom)
+    implementation rootProject.ext.dependencies.firebaseConfigKtx
+    implementation rootProject.ext.dependencies.admobAd
+    implementation rootProject.ext.dependencies.moshi
+    kapt rootProject.ext.dependencies.moshiCodegen
+    implementation project(':ss')
+
+    implementation "com.android.installreferrer:installreferrer:2.2"
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.github.xuexiangjys.XUtil:xutil-core:2.0.0'
+    implementation("com.squareup.okhttp3:okhttp:4.8.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.8.0")
+}
