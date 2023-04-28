@@ -20,6 +20,8 @@ import com.spin.secure.utils.SpinUtils
 import kotlinx.coroutines.*
 
 abstract class BaseConnector(protected val context: ComponentActivity) {
+    private var jobHeart: Job? = null
+
     interface Callback {
         fun onConnectTimeChanged(time: Long) {}
         fun onStateChanged(state: ConnectState) {}
@@ -60,7 +62,7 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
         var preConnectTime = 0L
             private set(value) {
                 field = value
-                SpinUtils.toBuriedPointConnectionTimeSpin("spin_mie",(value/1000).toInt())
+                SpinUtils.toBuriedPointConnectionTimeSpin("spin_mie", (value / 1000).toInt())
                 getAppMmkv().encode("conn_pre_time", value)
             }
             get() {
@@ -197,13 +199,14 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
                         connectConsumeTime = maxWaitTime
                     }
                 }
-                //心跳上报
-                getHeartbeatReported()
+
                 if (isConnected()) {
                     state = ConnectState.Connected
                     onConnected()
                     onStartResult(true)
                     SpinUtils.toBuriedPointSpin("spin_mop")
+                    //心跳上报
+                    getHeartbeatReportedConnect()
                 } else {
                     destroyConnectJob()
                     stop()
@@ -229,6 +232,7 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
         state = ConnectState.Stopped
         onDisconnected()
         onStartResult(false)
+        getHeartbeatReportedDisConnect()
     }
 
     protected fun onConnected() {
@@ -241,10 +245,12 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
     }
 
     /**
-     * 心跳上报
+     * 心跳上报(链接)
      */
-    fun getHeartbeatReported() {
-        context.lifecycleScope.launch(Dispatchers.IO) {
+    fun getHeartbeatReportedConnect() {
+        jobHeart?.cancel()
+        jobHeart = null
+        jobHeart = context.lifecycleScope.launch(Dispatchers.IO) {
             while (isActive) {
                 var data: String
                 var ip: String
@@ -255,9 +261,20 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
                     data = "ba"
                     ip = Constant.CURRENT_IP_SPIN.asSpKeyAndExtract()
                 }
-                SpinOkHttpUtils.getHeartbeatReporting(data, ip)
-                delay(60000)
+                if (isConnected()) {
+                    SpinOkHttpUtils.getHeartbeatReporting(data, ip)
+                }
+                delay(6000)
             }
         }
+    }
+
+    /**
+     * 心跳上报(断开)
+     */
+    fun getHeartbeatReportedDisConnect() {
+        jobHeart?.cancel()
+        jobHeart = null
+        SpinOkHttpUtils.getHeartbeatReporting("ba", Constant.CURRENT_IP_SPIN.asSpKeyAndExtract())
     }
 }
