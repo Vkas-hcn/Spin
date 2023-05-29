@@ -15,6 +15,9 @@ import com.spin.secure.main.core.ConnectionRepository
 import com.spin.secure.main.core.MConnection
 import com.spin.secure.main.core.connector.BaseConnector
 import com.spin.secure.runOnMainProgress
+import com.spin.secure.utils.KLog
+import com.xuexiang.xutil.net.JsonUtil
+import com.xuexiang.xutil.tip.ToastUtils
 
 class ShadowsockConnector(context: ComponentActivity) : BaseConnector(context),
     ShadowsocksConnection.Callback {

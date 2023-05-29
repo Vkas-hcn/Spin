@@ -6,6 +6,8 @@ import com.spin.secure.main.core.connector.ss.syncFromData
 import com.spin.secure.toModelOrDefault
 import com.spin.secure.utils.SpinUtils.getDataFastServerData
 import com.spin.secure.utils.SpinUtils.getDataFromTheServer
+import com.xuexiang.xutil.net.JsonUtil
+import com.xuexiang.xutil.tip.ToastUtils
 
 class ConnectionRepository {
     companion object {
@@ -43,6 +45,7 @@ class ConnectionRepository {
     }
 
     fun listSmart(): List<MConnection> {
-        return getDataFastServerData()?:MConnectionLib().data
+        val data = getDataFastServerData()?:MConnectionLib().data
+        return data
     }
 }

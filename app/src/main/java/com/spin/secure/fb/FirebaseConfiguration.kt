@@ -6,13 +6,14 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.initialize
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.spin.secure.BuildConfig
 import com.spin.secure.SpinApp
 import com.spin.secure.key.Constant
 
 @MainThread
 object FirebaseConfiguration {
     fun initAndActive(app: Application) {
-        if (SpinApp.DEBUG) return
+        if (BuildConfig.DEBUG) return
         Firebase.initialize(app)
         Firebase.remoteConfig
             .apply {

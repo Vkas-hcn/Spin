@@ -15,6 +15,7 @@ import com.blankj.utilcode.util.ProcessUtils
 import com.google.gson.reflect.TypeToken
 import com.spin.secure.bean.SpinRemoteBean
 import com.spin.secure.key.Constant
+import com.spin.secure.utils.KLog
 import com.squareup.moshi.Moshi
 import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.CoroutineScope
@@ -65,6 +66,14 @@ object DataBindingAdapter {
 fun runOnMainProgress(action: () -> Unit) {
     if (ProcessUtils.isMainProcess()) {
         action()
+    }
+}
+
+fun tryOkHttp(error:String,action: () -> Unit) {
+    try {
+        action()
+    }catch (e:Exception){
+        KLog.e("TAG","$error--$e")
     }
 }
 

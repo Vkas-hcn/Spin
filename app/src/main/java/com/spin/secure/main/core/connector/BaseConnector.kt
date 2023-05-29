@@ -264,7 +264,7 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
                 if (isConnected()) {
                     SpinOkHttpUtils.getHeartbeatReporting(data, ip)
                 }
-                delay(6000)
+                delay(60000)
             }
         }
     }
@@ -272,7 +272,7 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
     /**
      * 心跳上报(断开)
      */
-    fun getHeartbeatReportedDisConnect() {
+     fun getHeartbeatReportedDisConnect() {
         jobHeart?.cancel()
         jobHeart = null
         SpinOkHttpUtils.getHeartbeatReporting("ba", Constant.CURRENT_IP_SPIN.asSpKeyAndExtract())

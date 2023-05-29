@@ -6,9 +6,10 @@ import androidx.core.net.toUri
 import com.blankj.utilcode.util.ToastUtils
 
 object AppSettings {
-    private const val CONTACT_EMAIL = "xxxx@gmail.com"
-    private const val PRIVACY_AGREEMENT = "https://www.baidu.com"
-    private const val GOOGLE_PLAY = "https://play.google.com/store/apps/details?id="
+    private const val CONTACT_EMAIL = "jennychen5313@gmail.com"
+    private const val PRIVACY_AGREEMENT = "https://sites.google.com/view/spin-privacy-/%E4%BD%8F%E5%AE%85"
+    private const val GOOGLE_PLAY = "https://play.google.com/store/apps/details?id=com.spin.secure.wifi.super.master"
+
 
     @JvmStatic
     fun openEmail(context: Context) {

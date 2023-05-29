@@ -99,9 +99,9 @@ object SpinUtils {
     fun referrer(
         context: Context,
     ) {
-        installReferrer = "gclid"
+//        installReferrer = "gclid"
 //        installReferrer = "fb4a"
-        getAppMmkv().encode(Constant.INSTALL_REFERRER, installReferrer)
+//        getAppMmkv().encode(Constant.INSTALL_REFERRER, installReferrer)
         try {
             val referrerClient = InstallReferrerClient.newBuilder(context).build()
             referrerClient.startConnection(object : InstallReferrerStateListener {
@@ -117,7 +117,7 @@ object SpinUtils {
                             }
                             installReferrer =
                                 referrerClient.installReferrer.installReferrer ?: ""
-//                            getAppMmkv().encode(Constant.INSTALL_REFERRER, installReferrer)
+                            getAppMmkv().encode(Constant.INSTALL_REFERRER, installReferrer)
                             KLog.e("TAG", "installReferrer====${installReferrer}")
                             referrerClient.endConnection()
                             return
@@ -174,14 +174,13 @@ object SpinUtils {
     fun beforeLoadLinkSettingsBa(mAd: MAd): MAd {
         val ipAfterVpnLink = Constant.IP_AFTER_VPN_LINK_SPIN.asSpKeyAndExtract()
         val ipAfterVpnCity = Constant.IP_AFTER_VPN_CITY_SPIN.asSpKeyAndExtract()
+
         if (SpinApp.isVpnGlobalLink) {
-            mAd.spin_load_ip = ipAfterVpnLink
-            mAd.spin_load_city = ipAfterVpnCity
+            setVpnGlobalLinkSettings(mAd, ipAfterVpnLink, ipAfterVpnCity)
         } else {
-            val ip = getIpBean().ip.toString()
-            mAd.spin_load_ip = ip
-            mAd.spin_load_city = "null"
+            setNonVpnGlobalLinkSettings(mAd)
         }
+
         return mAd
     }
 
@@ -191,17 +190,27 @@ object SpinUtils {
     fun afterLoadLinkSettingsBa(mAd: MAd): MAd {
         val ipAfterVpnLink = Constant.IP_AFTER_VPN_LINK_SPIN.asSpKeyAndExtract()
         val ipAfterVpnCity = Constant.IP_AFTER_VPN_CITY_SPIN.asSpKeyAndExtract()
+
         if (SpinApp.isVpnGlobalLink) {
-            mAd.spin_show_ip = ipAfterVpnLink
-            mAd.spin_show_city = ipAfterVpnCity
+            setVpnGlobalLinkSettings(mAd, ipAfterVpnLink, ipAfterVpnCity)
         } else {
-            val ip = getIpBean().ip.toString()
-            KLog.e("TAG", "getIpBean().ip${ip}")
-            mAd.spin_show_ip = ip
-            mAd.spin_show_city = "null"
+            setNonVpnGlobalLinkSettings(mAd)
         }
+
         return mAd
     }
+
+    private fun setVpnGlobalLinkSettings(mAd: MAd, ipAfterVpnLink: String, ipAfterVpnCity: String) {
+        mAd.spin_load_ip = ipAfterVpnLink
+        mAd.spin_load_city = ipAfterVpnCity
+    }
+
+    private fun setNonVpnGlobalLinkSettings(mAd: MAd) {
+        val ip = getIpBean().ip.toString()
+        mAd.spin_load_ip = ip
+        mAd.spin_load_city = "null"
+    }
+
 
     /**
      * 获取Ip Bean
@@ -219,70 +228,44 @@ object SpinUtils {
      * 是否屏蔽插屏广告
      */
     fun isBlockScreenAds(spinRef: String): Boolean {
-        when (spinRef) {
-            "1" -> {
-                return true
-            }
-            "2" -> {
-                return isValuableUser()
-            }
-            "3" -> {
-                return isFacebookUser()
-            }
-            "4" -> {
-                return false
-            }
-            else -> {
-                return true
-            }
+        return when (spinRef) {
+            "1" -> true
+            "2" -> isValuableUser()
+            "3" -> isFacebookUser()
+            "4" -> false
+            else -> true
         }
     }
+
 
     /**
      * 埋点
      */
     fun toBuriedPointSpin(name: String) {
-        if (!BuildConfig.DEBUG) {
-            Firebase.analytics.logEvent(name, null)
-        } else {
-            KLog.d(logTagSpin, "触发埋点----name=${name}")
+        if (BuildConfig.DEBUG) {
+            KLog.d(logTagSpin, "触发埋点----name=$name")
+            return
         }
-    }
 
-    /**
-     * 埋点用户
-     */
-    fun toBuriedPointUserTypeSpin(name: String, value: String) {
-        if (!BuildConfig.DEBUG) {
-            Firebase.analytics.setUserProperty(name, value)
-        } else {
-            KLog.d(logTagSpin, "触发埋点----name=${name}-----value=${value}")
-        }
+        Firebase.analytics.logEvent(name, null)
     }
 
     /**
      * 埋点连接时长
      */
     fun toBuriedPointConnectionTimeSpin(name: String, time: Int) {
-        if (!BuildConfig.DEBUG) {
-            Firebase.analytics.logEvent(name, bundleOf("time" to time))
-        } else {
-            KLog.d(logTagSpin, "触发埋点----name=${name}---time=${time}")
+        if (BuildConfig.DEBUG) {
+            KLog.d(logTagSpin, "触发埋点----name=$name---time=$time")
+            return
         }
+
+        Firebase.analytics.logEvent(name, bundleOf("time" to time))
     }
+
 
     /**
      * 下发结果解码
      */
-    fun sendResultDecoding(str: String): String {
-        val processedStr =
-            str.filterIndexed { index, _ -> index == 0 || (index > 0 && (index + 1) % 3 != 0) }
-        KLog.e("base", "Processed string: $processedStr")
-        val decodedBytes =
-            Base64.decode(processedStr.toByteArray(Charsets.UTF_8), Base64.DEFAULT)
-        return decodedBytes.toString(Charsets.UTF_8)
-    }
-
     fun splitIntoFour(input: String): String {
         val chunkSize = input.length / 4
         val parts = mutableListOf<String>()

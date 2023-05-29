@@ -21,3 +21,9 @@
 #-renamesourcefileattribute SourceFile
 -dontwarn com.chad.library.**
 -keep class com.chad.library.**{*;}
+-keep class com.spin.secure.bean.SpinData { *; }
+-keep class com.spin.secure.bean.SpinIpBean { *; }
+-keep class com.spin.secure.bean.SpinRemoteBean { *; }
+-keep class com.spin.secure.bean.SpinServer { *; }
+-keep class com.spin.secure.bean.SpinVpnBean { *; }
+

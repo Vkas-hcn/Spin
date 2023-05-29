@@ -65,7 +65,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             }
             SpinUtils.referrer(this@SplashActivity)
             SpinOkHttpUtils.postSessionEvent()
-//            SpinOkHttpUtils.getBlacklistData()
+            SpinOkHttpUtils.getBlacklistData()
         }
     }
 

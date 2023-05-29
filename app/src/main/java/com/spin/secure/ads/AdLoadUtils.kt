@@ -31,6 +31,7 @@ import com.spin.secure.utils.SpinUtils
 import com.spin.secure.utils.SpinUtils.afterLoadLinkSettingsBa
 import com.spin.secure.utils.SpinUtils.beforeLoadLinkSettingsBa
 import com.spin.secure.utils.SpinUtils.isBlockScreenAds
+import com.xuexiang.xutil.tip.ToastUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

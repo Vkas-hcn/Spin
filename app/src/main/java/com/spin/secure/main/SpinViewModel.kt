@@ -214,13 +214,13 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
                 startProgressAnimation(if (it) 2 else 0)
                 if (forConnect) {
                     if (it) {
-                        startResultActivity.value = it
+                        startResultActivity.postValue(it)
                     } else {
                         startConnectingAnimation.value = false
                         clickable.value = true
                     }
                 } else if (!forConnect && !it) {
-                    startResultActivity.value = it
+                    startResultActivity.postValue(it)
                 } else {
                     startConnectingAnimation.value = false
                     clickable.value = true

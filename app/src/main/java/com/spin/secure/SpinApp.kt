@@ -28,6 +28,7 @@ class SpinApp : Application(), LifecycleObserver {
     override fun onCreate() {
         super.onCreate()
         MMKV.initialize(this)
+        BaseConnector.initialize(this)
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         runOnMainProgress {
             self = this
@@ -36,15 +37,15 @@ class SpinApp : Application(), LifecycleObserver {
             XUtil.init(this)
             //是否开启打印日志
             KLog.init(BuildConfig.DEBUG)
-        }
-        BaseConnector.initialize(this)
-        val data = Constant.UUID_VALUE_SPIN.asSpKeyAndExtract()
-        if(data.isEmpty()){
-            getAppMmkv().encode(Constant.UUID_VALUE_SPIN, UUID.randomUUID().toString())
+            val data = Constant.UUID_VALUE_SPIN.asSpKeyAndExtract()
+            if(data.isEmpty()){
+                getAppMmkv().encode(Constant.UUID_VALUE_SPIN, UUID.randomUUID().toString())
+            }
         }
     }
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onMoveToForeground() {
         nativeAdRefreshBa =true
     }
+
 }
