@@ -24,6 +24,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_contact_us"
             android:layout_width="match_parent"
+            android:visibility="gone"
             android:layout_height="42dp"
             android:layout_marginTop="16dp"
             android:background="?android:attr/selectableItemBackground"

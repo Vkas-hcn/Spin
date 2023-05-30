@@ -119,7 +119,9 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
 
     private fun initLifecycle() {
         permissionRequireContract = context.registerForActivityResult(GetVpnPermission()) {
-            SpinUtils.toBuriedPointSpin("spin_get")
+            if(!it){
+                SpinUtils.toBuriedPointSpin("spin_get")
+            }
             permissionCallback?.invoke(!it)
             permissionCallback = null
         }
@@ -275,6 +277,8 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
      fun getHeartbeatReportedDisConnect() {
         jobHeart?.cancel()
         jobHeart = null
-        SpinOkHttpUtils.getHeartbeatReporting("ba", Constant.CURRENT_IP_SPIN.asSpKeyAndExtract())
+        GlobalScope.launch(Dispatchers.IO) {
+            SpinOkHttpUtils.getHeartbeatReporting("ba", Constant.CURRENT_IP_SPIN.asSpKeyAndExtract())
+        }
     }
 }

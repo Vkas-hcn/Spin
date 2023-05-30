@@ -122,37 +122,43 @@ object SpinTbaUtils {
     }
 
     fun install(context: Context, referrerDetails: ReferrerDetails): String {
-        val installJson = JSONObject().apply {
-            put(
-                "pauline",
-                referrerDetails.installBeginTimestampServerSeconds
-            ) // install_begin_timestamp_server_seconds
-            put("quota", "ebony") // quota
-            put("chive", "build/${Build.ID}") // build
-
-            put("bunyan", getMyDefaultUserAgent(context)) // user_agent
-            put(
-                "examine",
-                referrerDetails.installBeginTimestampSeconds
-            ) // install_begin_timestamp_seconds
-            put(
-                "dreg",
-                referrerDetails.referrerClickTimestampServerSeconds
-            ) // referrer_click_timestamp_server_seconds
-            put("cosmic", timeTheAppWasFirstInstalled(context)) // install_first_seconds
-            put("grisly", timeLastUpdateWasApplied(context)) // last_update_seconds
-            put("stylus", getLimitTracking(context)) // lat
-            put(
-                "rag",
-                referrerDetails.referrerClickTimestampSeconds
-            ) // referrer_click_timestamp_seconds
-            put("crowley", referrerDetails.googlePlayInstantParam) // google_play_instant
-            put("connote", referrerDetails.installReferrer) // referrer_url
-            put("dolly", referrerDetails.installVersion) // install_version
-        }
-
         return getTopLevelJsonData().apply {
-            put("brink", installJson)
+            put("quota", "ebony")
+            //build
+            put("chive", "build/${Build.ID}")
+
+            //referrer_url
+            put("connote", referrerDetails.installReferrer)
+
+            //install_version
+            put("dolly", referrerDetails.installVersion)
+
+            //user_agent
+            put("bunyan", getMyDefaultUserAgent(context))
+
+            //lat
+            put("stylus", getLimitTracking(context))
+
+            //referrer_click_timestamp_seconds
+            put("rag", referrerDetails.referrerClickTimestampSeconds)
+
+            //install_begin_timestamp_seconds
+            put("examine", referrerDetails.installBeginTimestampSeconds)
+
+            //referrer_click_timestamp_server_seconds
+            put("dreg", referrerDetails.referrerClickTimestampServerSeconds)
+
+            //install_begin_timestamp_server_seconds
+            put("pauline", referrerDetails.installBeginTimestampServerSeconds)
+
+            //install_first_seconds
+            put("cosmic", timeTheAppWasFirstInstalled(context))
+
+            //last_update_seconds
+            put("grisly", timeLastUpdateWasApplied(context))
+
+            //google_play_instant
+            put("crowley", referrerDetails.googlePlayInstantParam)
         }.toString()
     }
 
@@ -182,7 +188,7 @@ object SpinTbaUtils {
     /**
      * 获取IP地址（https://ifconfig.me/ip）
      */
-    fun obtainIpAddress() {
+   suspend fun obtainIpAddress() {
         SpinOkHttpUtils.getCurrentIp()
     }
 

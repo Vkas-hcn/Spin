@@ -216,6 +216,7 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
     override fun onDestroy() {
         super.onDestroy()
         model.onDestroy()
+        SpinApp.nativeAdRefreshBa =true
     }
 
     private fun startHomeNativeAdJob() {
@@ -225,17 +226,17 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
         )
         homeAdJob = lifecycleScope.launch(Dispatchers.Main) {
             delay(300L)
-            if (isVisible()) {
-                if (SpinApp.nativeAdRefreshBa && bubbleConfig.spin_start == "2") {
+            if (SpinApp.nativeAdRefreshBa && isVisible()) {
+                if (bubbleConfig.spin_start == "2") {
                     getVpnPlan()
                 }
-                SpinApp.nativeAdRefreshBa = false
                 var res = resultOfHomeAds()
                 while (res == null) {
                     delay(1000L)
                     res = resultOfHomeAds()
                 }
                 model.showHomeNativeAd.value = res
+                SpinApp.nativeAdRefreshBa = false
             }
         }
     }

@@ -144,12 +144,15 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
                 val progress = it.animatedValue as Int
                 if (progress in 20..99) {
                     AdLoadUtils.resultOf(AdsCons.POS_CONNECT)?.let { res ->
+                        KLog.e("TAG","doToggleConnection.value111111")
+
                         destroyConnectJob()
                         showConnectAd.value = ConnectAdParam(
                             forConnect = forConnect,
                             res = res,
                             next = { forConnect2 ->
                                 doToggleConnection.value = forConnect2
+                                KLog.e("TAG","doToggleConnection.value222222")
                             }
                         )
                     }
@@ -195,11 +198,14 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
     fun onPause() {
         mConnectJob?.pause()
         mStartProgressJob?.pause()
+        KLog.e("TAG","onPause------->")
     }
 
     fun onResume() {
         mConnectJob?.resume()
         mStartProgressJob?.resume()
+        KLog.e("TAG","onResume------->")
+
     }
 
     private fun destroyConnectJob() {
@@ -310,12 +316,16 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
             BaseConnector.state = Stopped
             if (!onDestroy) {
                 startConnectingAnimation.value = false
+                KLog.e("TAG","startConnectingAnimation---3")
+
                 startProgressAnimation(0, animated = false)
             }
         } else if (state == Stopping) {
             BaseConnector.state = Connected
             if (!onDestroy) {
                 startConnectingAnimation.value = false
+                KLog.e("TAG","startConnectingAnimation---4")
+
                 startProgressAnimation(2, animated = false)
             }
         }

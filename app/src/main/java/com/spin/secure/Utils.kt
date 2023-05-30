@@ -69,7 +69,7 @@ fun runOnMainProgress(action: () -> Unit) {
     }
 }
 
-fun tryOkHttp(error:String,action: () -> Unit) {
+suspend fun tryOkHttp(error:String, action:suspend () -> Unit) {
     try {
         action()
     }catch (e:Exception){

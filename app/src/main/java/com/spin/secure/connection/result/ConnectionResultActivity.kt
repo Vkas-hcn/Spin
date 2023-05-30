@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.BarUtils
 import com.spin.secure.R
+import com.spin.secure.SpinApp
 import com.spin.secure.ads.AdLoadUtils
 import com.spin.secure.ads.AdsCons
 import com.spin.secure.base.BaseActivity
@@ -52,13 +53,14 @@ class ConnectionResultActivity :
         )
         resultAdJob = lifecycleScope.launch(Dispatchers.Main) {
             delay(300L)
-            if (isVisible()) {
+            if (SpinApp.nativeAdRefreshResult && isVisible()) {
                 var res = resultOfResultAds()
                 while (res == null) {
                     delay(1000L)
                     res = resultOfResultAds()
                 }
                 model.showResultNativeAd.value = res
+                SpinApp.nativeAdRefreshResult =false
             }
         }
     }
@@ -89,5 +91,6 @@ class ConnectionResultActivity :
     override fun onDestroy() {
         super.onDestroy()
         AdLoadUtils.unregisterTask(adTask)
+        SpinApp.nativeAdRefreshResult =true
     }
 }

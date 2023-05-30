@@ -34,7 +34,7 @@ object SpinUtils {
     /**
      * 下发服务器转换
      */
-    fun deliverServerTransitions(): Boolean {
+    suspend fun deliverServerTransitions(): Boolean {
         val data = getDataFromTheServer()
         return if (data == null) {
             SpinOkHttpUtils.getDeliverData()
@@ -117,7 +117,7 @@ object SpinUtils {
                             }
                             installReferrer =
                                 referrerClient.installReferrer.installReferrer ?: ""
-                            getAppMmkv().encode(Constant.INSTALL_REFERRER, installReferrer)
+//                            getAppMmkv().encode(Constant.INSTALL_REFERRER, installReferrer)
                             KLog.e("TAG", "installReferrer====${installReferrer}")
                             referrerClient.endConnection()
                             return

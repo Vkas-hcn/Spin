@@ -1,5 +1,8 @@
 package com.spin.secure.net
+import androidx.collection.SimpleArrayMap
+import com.spin.secure.utils.KLog
 import com.xuexiang.xutil.app.AppUtils
+import com.xuexiang.xutil.net.JsonUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.*
@@ -10,7 +13,8 @@ import java.nio.charset.StandardCharsets
 
 object NewHttpClient {
     private val client = OkHttpClient()
-
+    //存储请求，用于取消
+    private val callMap = SimpleArrayMap<Any, Call>()
     suspend fun get(url: String): HttpResponse {
         val request = createRequest()
             .url(url)
@@ -27,12 +31,18 @@ object NewHttpClient {
                 URLEncoder.encode(entry.value.toString(), StandardCharsets.UTF_8.toString())
             )
         }
+        KLog.e("TBA","Cloak接入--params=${JsonUtil.toJson(params)}")
         val request = createRequest()
             .get()
             .tag(params)
             .url(urlBuilder.build())
+            .cacheControl(CacheControl.FORCE_NETWORK)
             .build()
+         val mClient = OkHttpClient.Builder().build()
 
+        val newCall = mClient.newCall(request)
+        //存储请求，用于取消
+        callMap.put(request.tag(), newCall)
         return execute(request)
     }
 

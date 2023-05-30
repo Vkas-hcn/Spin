@@ -20,7 +20,10 @@ class SpinApp : Application(), LifecycleObserver {
         const val DEBUG = true
         lateinit var self: SpinApp
         // 原生广告刷新
-        var nativeAdRefreshBa = false
+        var nativeAdRefreshBa = true
+
+        // 原生广告刷新
+        var nativeAdRefreshResult = true
         // VPN是否链接
         var isVpnGlobalLink = false
     }
@@ -42,10 +45,6 @@ class SpinApp : Application(), LifecycleObserver {
                 getAppMmkv().encode(Constant.UUID_VALUE_SPIN, UUID.randomUUID().toString())
             }
         }
-    }
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun onMoveToForeground() {
-        nativeAdRefreshBa =true
     }
 
 }

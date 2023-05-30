@@ -34,6 +34,9 @@ object Constant {
     const val BUBBLE_CLOAK = "bubble_cloak"
     //是否是黑名单用户
     const val BLACKLIST_USER_SPIN  ="blacklistUserSpin"
+    //是否获取黑名单用户
+    const val WHETHER_TO_OBTAIN_BLACKLISTED_USERS  ="whetherToObtainBlacklistedUsers"
+
     //下发服务器数据
     const val SEND_SERVER_DATA ="sendServerData"
     //服务器接收成功

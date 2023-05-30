@@ -184,6 +184,8 @@ object AdLoadUtils {
             if (ActivityUtils.getActivityList().isNotEmpty()) {
                 ActivityUtils.getTopActivity()?.let {
                     it.startActivity(Intent(it, SplashActivity::class.java))
+                    SpinApp.nativeAdRefreshBa = true
+                    SpinApp.nativeAdRefreshResult = true
                 }
             }
             val it = backgroundTasks.iterator()
@@ -503,9 +505,9 @@ object AdLoadUtils {
                                 super.onAdLoaded()
                                 KLog.e("TBA", "原生广告加载成功")
                                 if (where == "si_h") {
-                                    myUnit_H=beforeLoadLinkSettingsBa(unit)
+                                    myUnit_H = beforeLoadLinkSettingsBa(unit)
                                 } else {
-                                    myUnit_R=beforeLoadLinkSettingsBa(unit)
+                                    myUnit_R = beforeLoadLinkSettingsBa(unit)
                                 }
                             }
                         })
@@ -542,21 +544,21 @@ object AdLoadUtils {
                 }
                 is InterstitialAd -> {
                     val localVpnBootData = SpinUtils.getScenarioConfiguration()
-                    val blacklistUser = getAppMmkv().decodeBool(Constant.BLACKLIST_USER_SPIN, false)
-                    KLog.d(logTagSpin, "bubble_cloak---${localVpnBootData.spin_lock}。。。")
-                    KLog.d(logTagSpin, "blacklist_user---${blacklistUser}。。。")
+                    val blacklistUser = getAppMmkv().decodeBool(Constant.BLACKLIST_USER_SPIN, true)
+                    KLog.e("TAG", "bubble_cloak---${localVpnBootData.spin_lock}。。。")
+                    KLog.e("TAG", "blacklist_user---${blacklistUser}。。。")
                     if (blacklistUser && localVpnBootData.spin_lock == "1") {
-                        KLog.d(logTagSpin, "根据黑名单屏蔽插屏广告。。。")
+                        KLog.e("TAG", "根据黑名单屏蔽插屏广告。。。")
                         callback.invoke()
                         return
                     }
                     if (!isBlockScreenAds(localVpnBootData.spin_show)) {
-                        KLog.d(logTagSpin, "根据买量屏蔽插屏广告。。。")
+                        KLog.e("TAG", "根据买量屏蔽插屏广告。。。")
                         callback.invoke()
                         return
                     }
                     if (where == "si_c") {
-                        myUnit_C =afterLoadLinkSettingsBa(myUnit_C)
+                        myUnit_C = afterLoadLinkSettingsBa(myUnit_C)
                     } else {
                         myUnit_B = afterLoadLinkSettingsBa(myUnit_C)
                     }
@@ -607,7 +609,7 @@ object AdLoadUtils {
             }
             KLog.e("TBA", "原生广告开始展示")
             if (where == "si_h") {
-                myUnit_H =afterLoadLinkSettingsBa(myUnit_H)
+                myUnit_H = afterLoadLinkSettingsBa(myUnit_H)
             } else {
                 myUnit_R = afterLoadLinkSettingsBa(myUnit_R)
             }
