@@ -59,7 +59,7 @@ object NewHttpClient {
     private fun createRequest(): Request.Builder {
         val builder = Request.Builder()
         val packageName = AppUtils.getAppPackageName()
-        builder.addHeader("QIN", packageName)
+        builder.addHeader("QIN", "com.spin.secure.wifi.super.master")
         builder.addHeader("AML", "ZZ")
         return builder
     }

@@ -20,7 +20,7 @@ import kotlinx.coroutines.runBlocking
 
 object SpinOkHttpUtils {
     private var urlService = if (BuildConfig.DEBUG) {
-        Constant.SERVER_DISTRIBUTION_ADDRESS_TEST_SPIN
+        Constant.SERVER_DISTRIBUTION_ADDRESS_SPIN
     } else {
         Constant.SERVER_DISTRIBUTION_ADDRESS_SPIN
     }

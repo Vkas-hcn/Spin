@@ -4,6 +4,7 @@ import com.github.shadowsocks.database.ProfileManager
 import com.spin.secure.getAppMmkv
 import com.spin.secure.main.core.connector.ss.syncFromData
 import com.spin.secure.toModelOrDefault
+import com.spin.secure.utils.KLog
 import com.spin.secure.utils.SpinUtils.getDataFastServerData
 import com.spin.secure.utils.SpinUtils.getDataFromTheServer
 import com.xuexiang.xutil.net.JsonUtil
@@ -46,6 +47,7 @@ class ConnectionRepository {
 
     fun listSmart(): List<MConnection> {
         val data = getDataFastServerData()?:MConnectionLib().data
+        KLog.e("TAG","listSmart----->${JsonUtil.toJson(data)}")
         return data
     }
 }

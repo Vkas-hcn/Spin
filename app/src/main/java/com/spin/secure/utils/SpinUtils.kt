@@ -36,11 +36,14 @@ object SpinUtils {
      */
     suspend fun deliverServerTransitions(): Boolean {
         val data = getDataFromTheServer()
+        val dataFast = getDataFastServerData()
+
         return if (data == null) {
             SpinOkHttpUtils.getDeliverData()
             false
         } else {
             ProfileManager.syncFromData(data)
+            dataFast?.let { ProfileManager.syncFromData(it) }
             true
         }
     }
@@ -65,9 +68,11 @@ object SpinUtils {
                     }
                 }.toMutableList()
             } else {
+                KLog.e("TAG","获取下发服务器数据----->")
                 null
             }
         }.getOrElse {
+            KLog.e("TAG","获取下发服务器数据----->")
             null
         }
     }
@@ -89,9 +94,12 @@ object SpinUtils {
                     }
                 }.toMutableList()
             } else {
+                KLog.e("TAG","获取下发Fast服务器数据----->")
                 null
+
             }
         }.getOrElse {
+            KLog.e("TAG","获取下发Fast服务器数据----->")
             null
         }
     }

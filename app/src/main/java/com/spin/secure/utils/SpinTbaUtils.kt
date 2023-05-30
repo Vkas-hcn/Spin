@@ -180,7 +180,6 @@ object SpinTbaUtils {
             "huxtable" to (RomUtils.getRomInfo().version ?: ""), // os_version
             "gannett" to "rinse", // android_id
             "quark" to Constant.UUID_VALUE_SPIN.asSpKeyAndExtract(), // key
-
         )
     }
 
