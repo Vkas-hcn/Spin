@@ -42,6 +42,8 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val data = model.dialogDunUser(this)
+        if(data){return}
         with(binding) {
             BarUtils.addMarginTopEqualStatusBarHeight(topLayout)
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
@@ -64,6 +66,9 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
             btnToggle.click {
                 lifecycleScope.launch {
                     SpinUtils.toBuriedPointSpin("spin_ccl")
+                    SpinUtils.getIpInformation()
+                    val data = model.dialogDunUser(this@SpinActivity)
+                    if(data){return@launch}
                     if (SpinUtils.deliverServerTransitions()) {
                         model.toggleConnection()
                         proList.visibility = View.GONE

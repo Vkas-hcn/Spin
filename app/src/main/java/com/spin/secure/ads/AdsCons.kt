@@ -10,4 +10,8 @@ object AdsCons {
     const val WAY_OPEN = "o"
     const val WAY_INTER = "i"
     const val WAY_NATIVE = "n"
+
+    const val ip1="ip1"
+    const val ip2="ip2"
+
 }

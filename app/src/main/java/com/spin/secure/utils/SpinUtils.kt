@@ -10,6 +10,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.google.gson.reflect.TypeToken
 import com.spin.secure.*
+import com.spin.secure.ads.AdsCons
 import com.spin.secure.ads.MAd
 import com.spin.secure.bean.SpinIpBean
 import com.spin.secure.bean.SpinRemoteBean
@@ -25,6 +26,9 @@ import com.xuexiang.xutil.resource.ResourceUtils
 import com.xuexiang.xutil.resource.ResourceUtils.readStringFromAssert
 import com.xuexiang.xutil.security.Base64Utils
 import kotlinx.coroutines.*
+import java.net.HttpURLConnection
+import java.net.URL
+import java.nio.charset.Charset
 
 object SpinUtils {
     private var installReferrer: String = ""
@@ -288,5 +292,56 @@ object SpinUtils {
     fun encodeWithBase64(parts: List<String>): String {
         val combined = parts.joinToString("")
         return Base64Utils.decode(combined, "UTF-8")
+    }
+
+
+
+
+
+    fun getIpInformation() {
+        val ipInfo = getIpInfoFromUrl("https://ip.seeip.org/geoip/")
+        if (ipInfo.isNotEmpty()) {
+            getAppMmkv().encode(AdsCons.ip1,ipInfo)
+        } else {
+            getAppMmkv().encode(AdsCons.ip1,"")
+            getIpInformation2()
+        }
+    }
+
+    private fun getIpInfoFromUrl(urlString: String): String {
+        val sb = StringBuffer()
+        try {
+            val url = URL(urlString)
+            val conn = url.openConnection() as HttpURLConnection
+            conn.requestMethod = "GET"
+            conn.connectTimeout = 10000
+            val code = conn.responseCode
+            if (code == 200) {
+                val inputStream = conn.inputStream
+                val buffer = ByteArray(1024)
+                var len: Int
+                while (inputStream.read(buffer).also { len = it } != -1) {
+                    sb.append(String(buffer, 0, len, Charset.forName("UTF-8")))
+                }
+                inputStream.close()
+                conn.disconnect()
+                KLog.e("tab-ip", "sb==$sb")
+                return sb.toString()
+            } else {
+                KLog.e("tab-ip", "code==$code")
+            }
+        } catch (e: Exception) {
+            KLog.e("tab-ip", "Exception==${e.message}")
+        }
+        return ""
+    }
+
+    private fun getIpInformation2() {
+        val ipInfo = getIpInfoFromUrl("https://api.myip.com/")
+        if (ipInfo.isNotEmpty()) {
+            getAppMmkv().encode(AdsCons.ip2,ipInfo)
+        } else {
+            KLog.e("tab-ip", "Failed to retrieve IP information from the second URL")
+        }
     }
 }

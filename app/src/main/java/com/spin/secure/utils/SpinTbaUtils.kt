@@ -189,6 +189,7 @@ object SpinTbaUtils {
      */
    suspend fun obtainIpAddress() {
         SpinOkHttpUtils.getCurrentIp()
+        SpinUtils.getIpInformation()
     }
 
     /**

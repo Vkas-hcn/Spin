@@ -1,15 +1,22 @@
 package com.spin.secure.main
 
 import android.animation.ValueAnimator
+import android.app.Activity
+import android.app.AlertDialog
 import android.app.Application
+import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.blankj.utilcode.util.NetworkUtils
 import com.spin.secure.*
 import com.spin.secure.ads.AdLoadUtils
 import com.spin.secure.ads.AdsCons
 import com.spin.secure.base.BaseViewModel
+import com.spin.secure.bean.SpinIp2Bean
+import com.spin.secure.bean.SpinIpBean
 import com.spin.secure.key.Constant
 import com.spin.secure.main.core.ConnectState
 import com.spin.secure.main.core.ConnectState.*
@@ -19,6 +26,9 @@ import com.spin.secure.main.core.connector.BaseConnector
 import com.spin.secure.main.core.countryIconResId
 import com.spin.secure.utils.KLog
 import com.spin.secure.utils.SpinUtils
+import com.xuexiang.xutil.XUtil
+import com.xuexiang.xutil.net.JsonUtil
+import java.util.*
 
 class SpinViewModel(application: Application) : BaseViewModel(application), BaseConnector.Callback {
     class ConnectAdParam(
@@ -336,5 +346,66 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
      */
     fun isItABuyingUser(): Boolean {
         return SpinUtils.isValuableUser()
+    }
+
+
+    /**
+     * 判断是否是非法IP；中国大陆IP、伊朗IP
+     */
+    fun isIllegalIp(): Boolean {
+        val ipData = getAppMmkv().decodeString(AdsCons.ip1)
+        val ptIpBean: SpinIpBean? = runCatching {
+            JsonUtil.fromJson(ipData, SpinIpBean::class.java)
+        }.getOrNull()
+
+        if (ptIpBean != null) {
+            return ptIpBean.country_code in listOf("IR", "CN", "HK", "MO")
+        }
+
+        return isIllegalIp2()
+    }
+
+    private fun isIllegalIp2(): Boolean {
+        val ipData = getAppMmkv().decodeString(AdsCons.ip2)
+        val locale = Locale.getDefault()
+        val language = locale.language
+        KLog.e("tab-ip", "language=$language")
+
+        val ptIpBean: SpinIp2Bean? = runCatching {
+            JsonUtil.fromJson(ipData, SpinIp2Bean::class.java)
+        }.getOrNull()
+
+        if (ptIpBean != null) {
+            KLog.e("tab-ip", "ptIpBean.cc=${ptIpBean.cc}")
+            return ptIpBean.cc in listOf("IR", "CN", "HK", "MO")
+        }
+
+        return language in listOf("zh", "fa")
+    }
+
+    /**
+     * 是否显示不能使用弹框
+     */
+    fun whetherTheBulletBoxCannotBeUsed(context: AppCompatActivity) {
+        val dialogVpn: AlertDialog = AlertDialog.Builder(context)
+            .setTitle("VPN")
+            .setMessage("Due to policy reasons,this service is not available in your country")
+            .setCancelable(false)
+            .setPositiveButton("confirm") { dialog, _ ->
+                dialog.dismiss()
+                XUtil.exitApp()
+            }.create()
+        dialogVpn.setCancelable(false)
+        dialogVpn.show()
+        dialogVpn.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(Color.BLACK)
+        dialogVpn.getButton(DialogInterface.BUTTON_NEGATIVE)?.setTextColor(Color.BLACK)
+    }
+
+    fun dialogDunUser(activity: AppCompatActivity):Boolean {
+        if (isIllegalIp()) {
+            whetherTheBulletBoxCannotBeUsed(activity)
+            return true
+        }
+        return false
     }
 }
