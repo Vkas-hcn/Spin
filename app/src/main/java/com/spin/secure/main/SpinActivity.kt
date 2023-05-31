@@ -36,10 +36,6 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
 
     private var homeAdJob: Job? = null
 
-    //是否执行A方案
-    private var whetherToImplementPlanA = false
-    val bubbleConfig: SpinRemoteBean = SpinUtils.getScenarioConfiguration()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val data = model.dialogDunUser(this)
@@ -118,10 +114,7 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
                 ShadowsockConnector(that)
             }
         }
-        KLog.d(logTagSpin, "bubbleConfig---->${toJson(bubbleConfig)}")
-        if (bubbleConfig.spin_start == "1") {
-            getVpnPlan()
-        }
+
     }
 
     private fun showConnectAd(param: SpinViewModel.ConnectAdParam) {
@@ -232,9 +225,6 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
         homeAdJob = lifecycleScope.launch(Dispatchers.Main) {
             delay(300L)
             if (SpinApp.nativeAdRefreshBa && isVisible()) {
-                if (bubbleConfig.spin_start == "2") {
-                    getVpnPlan()
-                }
                 var res = resultOfHomeAds()
                 while (res == null) {
                     delay(1000L)
@@ -264,66 +254,5 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
     private fun cancelHomeNativeAdJob() {
         homeAdJob?.cancel()
         homeAdJob = null
-    }
-
-    /**
-     * 获取Vpn方案
-     */
-    private fun getVpnPlan() {
-        if (!model.isItABuyingUser()) {
-            //非买量用户直接走A方案
-            whetherToImplementPlanA = true
-            return
-        }
-        val data = bubbleConfig.spin_may
-        if ((data).isEmpty()) {
-            KLog.d(logTagSpin, "判断Vpn方案---默认")
-            vpnCPlan("50")
-        } else {
-            //C
-            whetherToImplementPlanA = false
-            vpnCPlan(data)
-        }
-    }
-
-    /**
-     * vpn B 方案
-     */
-    private fun vpnBPlan() {
-        lifecycleScope.launch {
-            if (SpinUtils.deliverServerTransitions()) {
-                model.linkVpn()
-                binding.proList.visibility = View.GONE
-            } else {
-                binding.proList.visibility = View.VISIBLE
-                delay(2000)
-                binding.proList.visibility = View.GONE
-            }
-        }
-    }
-
-    /**
-     * vpn C 方案
-     * 概率
-     */
-    private fun vpnCPlan(mProbability: String) {
-        val mProbabilityInt = mProbability.toIntOrNull()
-        if (mProbabilityInt == null) {
-            whetherToImplementPlanA = true
-        } else {
-            val random = (0..100).shuffled().last()
-            when {
-                random <= mProbabilityInt -> {
-                    //B
-                    KLog.d(logTagSpin, "随机落在B方案")
-                    vpnBPlan() //20，代表20%为B用户；80%为A用户
-                }
-                else -> {
-                    //A
-                    KLog.d(logTagSpin, "随机落在A方案")
-                    whetherToImplementPlanA = true
-                }
-            }
-        }
     }
 }

@@ -33,8 +33,6 @@ import java.nio.charset.Charset
 object SpinUtils {
     private var installReferrer: String = ""
     private val job = Job()
-    private val timerThread = CoroutineScope(job)
-
     /**
      * 下发服务器转换
      */
@@ -111,9 +109,9 @@ object SpinUtils {
     fun referrer(
         context: Context,
     ) {
-//        installReferrer = "gclid"
+        installReferrer = "gclid"
 //        installReferrer = "fb4a"
-//        getAppMmkv().encode(Constant.INSTALL_REFERRER, installReferrer)
+        getAppMmkv().encode(Constant.INSTALL_REFERRER, installReferrer)
         try {
             val referrerClient = InstallReferrerClient.newBuilder(context).build()
             referrerClient.startConnection(object : InstallReferrerStateListener {
