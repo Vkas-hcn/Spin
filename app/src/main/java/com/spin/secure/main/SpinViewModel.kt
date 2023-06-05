@@ -291,7 +291,17 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
             if (canStop()) closeConnection() else openConnection()
         }
     }
-
+    /**
+     * b方案链接VPN
+     */
+    fun linkVpn() {
+        doOnConnector {
+            if (!canStop()) {
+                SpinUtils.toBuriedPointSpin("spin_go")
+                openConnection()
+            }
+        }
+    }
     private fun doOnConnector(action: BaseConnector.() -> Unit) {
         mConnector?.let { action(it) }
     }
@@ -328,6 +338,13 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
             }
         }
     }
+    /**
+     * 是否是买量用户
+     */
+    fun isItABuyingUser(): Boolean {
+        return SpinUtils.isValuableUser()
+    }
+
 
     /**
      * 判断是否是非法IP；中国大陆IP、伊朗IP

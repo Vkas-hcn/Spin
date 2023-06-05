@@ -9,12 +9,15 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.ToastUtils
 import com.spin.secure.AppScope
+import com.spin.secure.ads.AdLoadUtils
 import com.spin.secure.asSpKeyAndExtract
 import com.spin.secure.forEachRemain
 import com.spin.secure.getAppMmkv
 import com.spin.secure.key.Constant
+import com.spin.secure.main.SpinActivity
 import com.spin.secure.main.core.*
 import com.spin.secure.main.core.connector.ss.ShadowsockConnector
+import com.spin.secure.utils.KLog
 import com.spin.secure.utils.SpinOkHttpUtils
 import com.spin.secure.utils.SpinUtils
 import kotlinx.coroutines.*
@@ -119,7 +122,7 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
 
     private fun initLifecycle() {
         permissionRequireContract = context.registerForActivityResult(GetVpnPermission()) {
-            if(!it){
+            if (!it) {
                 SpinUtils.toBuriedPointSpin("spin_get")
             }
             permissionCallback?.invoke(!it)
@@ -207,6 +210,11 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
                     onConnected()
                     onStartResult(true)
                     SpinUtils.toBuriedPointSpin("spin_mop")
+                    if (!SpinActivity.whetherToImplementPlanA) {
+                        KLog.e("cwhsi","清空加载")
+                        AdLoadUtils.loadAllAd()
+                        SpinActivity.whetherToImplementPlanA = true
+                    }
                     //心跳上报
                     getHeartbeatReportedConnect()
                 } else {
@@ -274,11 +282,14 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
     /**
      * 心跳上报(断开)
      */
-     fun getHeartbeatReportedDisConnect() {
+    fun getHeartbeatReportedDisConnect() {
         jobHeart?.cancel()
         jobHeart = null
         GlobalScope.launch(Dispatchers.IO) {
-            SpinOkHttpUtils.getHeartbeatReporting("ba", Constant.CURRENT_IP_SPIN.asSpKeyAndExtract())
+            SpinOkHttpUtils.getHeartbeatReporting(
+                "ba",
+                Constant.CURRENT_IP_SPIN.asSpKeyAndExtract()
+            )
         }
     }
 }

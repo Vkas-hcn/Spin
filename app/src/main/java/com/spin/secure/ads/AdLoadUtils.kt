@@ -122,6 +122,27 @@ object AdLoadUtils {
         }
     }
 
+    fun loadAllAd() {
+
+        runCatching {
+            Load.of(AdsCons.POS_HOME)?.res =null
+            Load.of(AdsCons.POS_HOME)?.isLoading =false
+            Load.of(AdsCons.POS_HOME)?.load()
+
+            Load.of(AdsCons.POS_CONNECT)?.res =null
+            Load.of(AdsCons.POS_CONNECT)?.isLoading =false
+            Load.of(AdsCons.POS_CONNECT)?.load()
+
+            Load.of(AdsCons.POS_RESULT)?.res =null
+            Load.of(AdsCons.POS_RESULT)?.isLoading =false
+            Load.of(AdsCons.POS_RESULT)?.load()
+
+            Load.of(AdsCons.POS_BACK)?.res =null
+            Load.of(AdsCons.POS_BACK)?.isLoading =false
+            Load.of(AdsCons.POS_BACK)?.load()
+        }
+    }
+
     private object Hot {
         private var startedActivities = 0
         private var backgroundJob: Job? = null
@@ -223,9 +244,9 @@ object AdLoadUtils {
                     else -> null
                 }
             }
+
         }
 
-        private var isLoading = false
         private val localAdJson by lazy {
             runCatching {
                 ResourceUtils.readAssets2String("ads.json")
@@ -242,7 +263,9 @@ object AdLoadUtils {
             }
         private var createdTime = 0L
         var res: Any? = null
-            private set
+             set
+        var isLoading = false
+            set
 
         private fun printLog(content: String) {
             content.printAdLog(where)
