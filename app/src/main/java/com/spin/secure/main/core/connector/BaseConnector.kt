@@ -73,7 +73,7 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
             }
         private var connectTimeJob: Job? = null
 
-        private fun startTimer() {
+         fun startTimer() {
             connectTimeJob?.cancel()
             connectTimeJob = AppScope.launch(Dispatchers.Main) {
                 while (true) {
@@ -83,7 +83,7 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
             }
         }
 
-        private fun stopTimer(isReset: Boolean) {
+        fun stopTimer(isReset: Boolean) {
             connectTimeJob?.cancel()
             connectTimeJob = null
             if (!isReset) {
@@ -148,7 +148,7 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
     protected abstract fun destroyConnection()
     protected abstract fun updateBandwidthTimeout(bandwidthTimeout: Long)
 
-    private fun start() {
+     fun start() {
         val server = connectData
         doStart(
             if (server.smart) connectionRepository.listSmart().randomOrNull()
@@ -158,7 +158,7 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
 
     protected abstract fun doStart(data: MConnection?)
 
-    private fun stop() {
+     fun stop() {
         doStop()
     }
 
@@ -191,9 +191,9 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
         stopTimer(true)
         destroyConnectJob()
         connectServiceJob = context.lifecycleScope.launch {
-            launch(Dispatchers.IO) {
-                start()
-            }
+//            launch(Dispatchers.IO) {
+//                start()
+//            }
             launch {
                 var connectConsumeTime = 0L
                 val maxWaitTime = 10000L
@@ -210,11 +210,6 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
                     onConnected()
                     onStartResult(true)
                     SpinUtils.toBuriedPointSpin("spin_mop")
-                    if (!SpinActivity.whetherToImplementPlanA) {
-                        KLog.e("cwhsi","清空加载")
-                        AdLoadUtils.loadAllAd()
-                        SpinActivity.whetherToImplementPlanA = true
-                    }
                     //心跳上报
                     getHeartbeatReportedConnect()
                 } else {
@@ -245,7 +240,7 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
         getHeartbeatReportedDisConnect()
     }
 
-    protected fun onConnected() {
+     fun onConnected() {
         preConnectData = connectData
         startTimer()
     }

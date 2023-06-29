@@ -30,8 +30,6 @@ import com.spin.secure.utils.SpinOkHttpUtils
 import com.spin.secure.utils.SpinUtils
 import com.spin.secure.utils.SpinUtils.afterLoadLinkSettingsBa
 import com.spin.secure.utils.SpinUtils.beforeLoadLinkSettingsBa
-import com.spin.secure.utils.SpinUtils.isBlockScreenAds
-import com.xuexiang.xutil.tip.ToastUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -115,30 +113,45 @@ object AdLoadUtils {
 
     private fun preloadAds() {
         runCatching {
-            Load.of(AdsCons.POS_OPEN)?.load()
-            Load.of(AdsCons.POS_HOME)?.load()
-            Load.of(AdsCons.POS_CONNECT)?.load()
-            Load.of(AdsCons.POS_RESULT)?.load()
+            Load.of(AdsCons.POS_OPEN)?.load(isLoadType = SpinApp.isLoadBack)
+            Load.of(AdsCons.POS_HOME)?.load(isLoadType = SpinApp.isLoadBack)
+            Load.of(AdsCons.POS_CONNECT)?.load(isLoadType = SpinApp.isLoadBack)
+            Load.of(AdsCons.POS_RESULT)?.load(isLoadType = SpinApp.isLoadBack)
         }
     }
 
     fun loadAllAd() {
-
         runCatching {
-            Load.of(AdsCons.POS_HOME)?.res =null
-            Load.of(AdsCons.POS_HOME)?.isLoading =false
+            Load.of(AdsCons.POS_HOME)?.res = null
+            Load.of(AdsCons.POS_HOME)?.isLoading = false
             Load.of(AdsCons.POS_HOME)?.load()
 
-            Load.of(AdsCons.POS_CONNECT)?.res =null
-            Load.of(AdsCons.POS_CONNECT)?.isLoading =false
+            Load.of(AdsCons.POS_CONNECT)?.res = null
+            Load.of(AdsCons.POS_CONNECT)?.isLoading = false
             Load.of(AdsCons.POS_CONNECT)?.load()
 
-            Load.of(AdsCons.POS_RESULT)?.res =null
-            Load.of(AdsCons.POS_RESULT)?.isLoading =false
+            Load.of(AdsCons.POS_RESULT)?.res = null
+            Load.of(AdsCons.POS_RESULT)?.isLoading = false
             Load.of(AdsCons.POS_RESULT)?.load()
 
-            Load.of(AdsCons.POS_BACK)?.res =null
-            Load.of(AdsCons.POS_BACK)?.isLoading =false
+            Load.of(AdsCons.POS_BACK)?.res = null
+            Load.of(AdsCons.POS_BACK)?.isLoading = false
+            Load.of(AdsCons.POS_BACK)?.load()
+        }
+    }
+
+    fun disConnectLoadAllAd() {
+        runCatching {
+
+            Load.of(AdsCons.POS_HOME)?.load()
+
+
+            Load.of(AdsCons.POS_CONNECT)?.load()
+
+
+            Load.of(AdsCons.POS_RESULT)?.load()
+
+
             Load.of(AdsCons.POS_BACK)?.load()
         }
     }
@@ -222,10 +235,27 @@ object AdLoadUtils {
                 needExecBackgroundTask = true
                 ActivityUtils.finishActivity(SplashActivity::class.java)
                 Show.finishAdActivity()
+                SpinApp.isLoadBack = false
             }
         }
     }
-
+    fun getInstData():MAds{
+        return this.inst
+    }
+    private val localAdJson by lazy {
+        runCatching {
+            ResourceUtils.readAssets2String("ads.json")
+        }.getOrElse { "" }
+    }
+    private val firebaseAdJson: String
+        get() {
+            return "si_ads".asSpKeyAndExtract()
+        }
+    private val inst: MAds
+        get() {
+            return firebaseAdJson.ifBlank { localAdJson }
+                .toModelOrDefault(MAds::class.java) { EmptyAds }
+        }
     private class Load private constructor(private val where: String) {
         companion object {
             private val open by lazy { Load(AdsCons.POS_OPEN) }
@@ -247,23 +277,10 @@ object AdLoadUtils {
 
         }
 
-        private val localAdJson by lazy {
-            runCatching {
-                ResourceUtils.readAssets2String("ads.json")
-            }.getOrElse { "" }
-        }
-        private val firebaseAdJson: String
-            get() {
-                return "si_ads".asSpKeyAndExtract()
-            }
-        private val inst: MAds
-            get() {
-                return firebaseAdJson.ifBlank { localAdJson }
-                    .toModelOrDefault(MAds::class.java) { EmptyAds }
-            }
+
         private var createdTime = 0L
         var res: Any? = null
-             set
+            set
         var isLoading = false
             set
 
@@ -274,8 +291,11 @@ object AdLoadUtils {
         fun load(
             context: Context = SpinApp.self,
             requestCount: Int = 1,
-            inst: MAds = this.inst
+            inst: MAds = AdLoadUtils.inst,
+            isLoadType: Boolean = false
         ) {
+            SpinUtils.isAppOpenSameDaySpin()
+
             if (isLoading) {
                 printLog("is requesting")
                 return
@@ -290,8 +310,24 @@ object AdLoadUtils {
                     printLog("cache is expired")
                     clearCache()
                 } else {
+                    printLog("Existing cache")
                     return
                 }
+            }
+            if (cache == null && SpinUtils.isThresholdReached()) {
+                printLog( "广告达到上线")
+                res = ""
+                return
+            }
+            if (!isLoadType && where == AdsCons.POS_BACK && SpinUtils.whetherBuyQuantityBan()) {
+                KLog.e(logTagSpin, "买量屏蔽用户不加载${where}广告")
+                res = ""
+                return
+            }
+            if (!isLoadType && (where == AdsCons.POS_BACK || where == AdsCons.POS_CONNECT) && SpinUtils.whetherBlackListBan()) {
+                KLog.e(logTagSpin, "黑名单用户不加载${where}广告")
+                res = ""
+                return
             }
             isLoading = true
             printLog("load started")
@@ -412,7 +448,14 @@ object AdLoadUtils {
             }
 
             override fun onAdShowedFullScreenContent() {
+                SpinUtils.recordNumberOfAdDisplaysSpin()
                 "showed".printAdLog(where)
+            }
+
+            override fun onAdClicked() {
+                super.onAdClicked()
+                KLog.d(logTagSpin, "${where}插屏广告点击")
+                SpinUtils.recordNumberOfAdClickSpin()
             }
         }
 
@@ -462,6 +505,9 @@ object AdLoadUtils {
                         })
                 }
                 AdsCons.WAY_INTER -> {
+                    if (where == AdsCons.POS_CONNECT && SpinApp.isVpnGlobalLink) {
+                        SpinUtils.toBuriedPointSpin("spi_hum")
+                    }
                     InterstitialAd.load(
                         requestContext,
                         unit.dataId,
@@ -469,6 +515,9 @@ object AdLoadUtils {
                         object : InterstitialAdLoadCallback() {
                             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                                 "request fail: ${loadAdError.message}".printAdLog(where)
+                                if (where == "si_c") {
+                                    myUnit_C = beforeLoadLinkSettingsBa(unit)
+                                }
                                 callback(null)
                             }
 
@@ -499,6 +548,9 @@ object AdLoadUtils {
                     )
                 }
                 AdsCons.WAY_NATIVE -> {
+                    if (where == AdsCons.POS_RESULT && SpinApp.isVpnGlobalLink) {
+                        SpinUtils.toBuriedPointSpin("spi_poke")
+                    }
                     AdLoader.Builder(requestContext, unit.dataId)
                         .forNativeAd {
                             callback(it)
@@ -519,6 +571,12 @@ object AdLoadUtils {
                             }
                         }
                         .withAdListener(object : AdListener() {
+                            override fun onAdOpened() {
+                                super.onAdOpened()
+                                KLog.e(logTagSpin, "${where}-原生广告点击")
+
+                                SpinUtils.recordNumberOfAdClickSpin()
+                            }
                             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                                 "request fail: ${loadAdError.message}".printAdLog(where)
                                 callback(null)
@@ -566,19 +624,17 @@ object AdLoadUtils {
                     res.show(context)
                 }
                 is InterstitialAd -> {
-                    val localVpnBootData = SpinUtils.getScenarioConfiguration()
-                    val blacklistUser = getAppMmkv().decodeBool(Constant.BLACKLIST_USER_SPIN, true)
-                    KLog.e("TAG", "bubble_cloak---${localVpnBootData.spin_lock}。。。")
-                    KLog.e("TAG", "blacklist_user---${blacklistUser}。。。")
-                    if (blacklistUser && localVpnBootData.spin_lock == "1") {
-                        KLog.e("TAG", "根据黑名单屏蔽插屏广告。。。")
+                    if (where != AdsCons.POS_OPEN && SpinUtils.whetherBlackListBan()) {
+                        KLog.e("logTagSpin", "根据黑名单屏蔽插屏广告。。。")
                         callback.invoke()
                         return
                     }
-                    if (!isBlockScreenAds(localVpnBootData.spin_show)) {
-                        KLog.e("TAG", "根据买量屏蔽插屏广告。。。")
-                        callback.invoke()
-                        return
+                    if (where == "si_b") {
+                        if (SpinUtils.whetherBuyQuantityBan()) {
+                            KLog.e("logTagSpin", "根据买量屏蔽插屏广告。。。")
+                            callback.invoke()
+                            return
+                        }
                     }
                     if (where == "si_c") {
                         myUnit_C = afterLoadLinkSettingsBa(myUnit_C)
@@ -637,6 +693,7 @@ object AdLoadUtils {
                 myUnit_R = afterLoadLinkSettingsBa(myUnit_R)
             }
             nativeAdView.setNativeAd(nativeAd)
+            SpinUtils.recordNumberOfAdDisplaysSpin()
             "showed".printAdLog(where)
             callback()
         }

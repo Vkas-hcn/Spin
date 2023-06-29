@@ -73,7 +73,7 @@ suspend fun tryOkHttp(error:String, action:suspend () -> Unit) {
     try {
         action()
     }catch (e:Exception){
-        KLog.e("TAG","$error--$e")
+        KLog.e("TBA","$error--$e")
     }
 }
 
@@ -158,5 +158,8 @@ fun AppCompatActivity.isVisible(): Boolean {
 
 fun String.asSpKeyAndExtract(): String {
     return getAppMmkv().decodeString(this) ?: ""
+}
+fun String.asSpKeyInt(): Int {
+    return getAppMmkv().decodeInt(this)
 }
 

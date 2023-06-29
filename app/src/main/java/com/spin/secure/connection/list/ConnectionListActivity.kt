@@ -16,6 +16,7 @@ import com.spin.secure.click
 import com.spin.secure.databinding.ActivityConnListBinding
 import com.spin.secure.main.core.*
 import com.spin.secure.main.core.connector.BaseConnector
+import com.spin.secure.utils.SpinUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -121,5 +122,11 @@ class ConnectionListActivity : BaseActivity<ActivityConnListBinding, ConnectionL
                 putExtra(IntentCons.KEY_SERVERS_CONNECT_DATA, connectData)
             })
         finish()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        SpinUtils.toBuriedPointSpin("spi_jot")
+
     }
 }

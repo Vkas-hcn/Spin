@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.blankj.utilcode.util.BarUtils
+import com.github.shadowsocks.bg.BaseService
 import com.spin.secure.*
 import com.spin.secure.ads.AdLoadUtils
 import com.spin.secure.ads.AdsCons
@@ -19,7 +20,9 @@ import com.spin.secure.connection.list.ConnectionListActivity
 import com.spin.secure.connection.result.ConnectionResultActivity
 import com.spin.secure.databinding.ActivitySpinBinding
 import com.spin.secure.key.Constant.logTagSpin
+import com.spin.secure.main.core.ConnectState
 import com.spin.secure.main.core.IntentCons
+import com.spin.secure.main.core.connector.BaseConnector
 import com.spin.secure.main.core.connector.ss.ShadowsockConnector
 import com.spin.secure.main.setting.AppSettings
 import com.spin.secure.utils.KLog
@@ -43,6 +46,7 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        KLog.e(logTagSpin,"MainActivity")
         val data = model.dialogDunUser(this)
         if(data){return}
         with(binding) {
@@ -146,24 +150,6 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
             tvPrivacyPolicy.click { AppSettings.openPrivacy(that) }
             tvUpdateApp.click { AppSettings.updateApp(that) }
             tvShareApp.click { AppSettings.shareApp(that) }
-//            tvDebug.click {
-//                MaterialDialog(that)
-//                    .show {
-//                        input(
-//                            prefill = getAppMmkv().decodeString(
-//                                "brand_strategy",
-//                                """{
-//   "strategy":0,
-//   "packages":[
-//   ]
-//}"""
-//                            )
-//                        ) { _, text ->
-//                            getAppMmkv().encode("brand_strategy", text.toString())
-//                        }
-//                        positiveButton(text = "Save")
-//                    }
-//            }
         }
     }
 
@@ -207,6 +193,7 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
         super.onPostResume()
         model.onResume()
         startHomeNativeAdJob()
+        SpinUtils.toBuriedPointSpin("spi_pond")
     }
 
     override fun onResume() {
@@ -233,6 +220,7 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
         homeAdJob = lifecycleScope.launch(Dispatchers.Main) {
             delay(300L)
             if (SpinApp.nativeAdRefreshBa && isVisible()) {
+                statusVpnSynchronization()
                 if (bubbleConfig.spin_start == "2") {
                     getVpnPlan()
                 }
@@ -309,7 +297,7 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
      * 概率
      */
     private fun vpnCPlan(mProbability: String) {
-        val mProbabilityInt = mProbability.toIntOrNull()
+        val mProbabilityInt = mProbability.trim().toIntOrNull()
         if (mProbabilityInt == null) {
             whetherToImplementPlanA = true
         } else {
@@ -318,6 +306,7 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
                 random <= mProbabilityInt -> {
                     //B
                     KLog.d(logTagSpin, "随机落在B方案")
+                    SpinUtils.toBuriedPointSpin("spin_go")
                     vpnBPlan() //20，代表20%为B用户；80%为A用户
                 }
                 else -> {
@@ -326,6 +315,16 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
                     whetherToImplementPlanA = true
                 }
             }
+        }
+    }
+    /**
+     * 状态同步
+     */
+    private fun statusVpnSynchronization(){
+        if(SpinApp.isVpnGlobalLink && model.connectionText.value == "00:00:00"){
+            BaseConnector.startTimer()
+            BaseConnector.state = ConnectState.Connected
+            model.connectProgress.value = 100
         }
     }
 }

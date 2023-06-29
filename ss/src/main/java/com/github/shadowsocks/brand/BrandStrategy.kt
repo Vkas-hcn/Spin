@@ -43,7 +43,7 @@ internal object BrandStrategy {
                         runCatching { builder.addAllowedApplication(it) }
                     }
             }
-            else -> builder.addDisallowedApplication(myPackageName)
+//            else -> builder.addDisallowedApplication(myPackageName)
         }
     }
 

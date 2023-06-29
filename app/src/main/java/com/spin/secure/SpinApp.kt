@@ -10,6 +10,7 @@ import com.spin.secure.fb.FirebaseConfiguration
 import com.spin.secure.key.Constant
 import com.spin.secure.main.core.connector.BaseConnector
 import com.spin.secure.utils.KLog
+import com.spin.secure.utils.SpinUtils
 import com.tencent.mmkv.MMKV
 import com.xuexiang.xutil.XUtil
 import java.util.*
@@ -26,6 +27,8 @@ class SpinApp : Application(), LifecycleObserver {
         var nativeAdRefreshResult = true
         // VPN是否链接
         var isVpnGlobalLink = false
+        var isLoadBack = true
+
     }
 
     override fun onCreate() {
@@ -35,8 +38,9 @@ class SpinApp : Application(), LifecycleObserver {
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         runOnMainProgress {
             self = this
-            FirebaseConfiguration.initAndActive(this)
             AdLoadUtils.init(this)
+
+            FirebaseConfiguration.initAndActive(this)
             XUtil.init(this)
             //是否开启打印日志
             KLog.init(BuildConfig.DEBUG)
@@ -44,6 +48,7 @@ class SpinApp : Application(), LifecycleObserver {
             if(data.isEmpty()){
                 getAppMmkv().encode(Constant.UUID_VALUE_SPIN, UUID.randomUUID().toString())
             }
+            SpinUtils.isAppOpenSameDaySpin()
         }
     }
 

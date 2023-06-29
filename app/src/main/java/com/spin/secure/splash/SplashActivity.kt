@@ -58,12 +58,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             if(!NetworkUtils.isNetworkAvailable()){
                 return@launch
             }
+            SpinUtils.referrer(this@SplashActivity)
             runBlocking {
                 SpinOkHttpUtils.getDeliverData()
                 SpinTbaUtils.obtainGoogleAdvertisingId(this@SplashActivity)
                 SpinTbaUtils.obtainIpAddress()
             }
-            SpinUtils.referrer(this@SplashActivity)
             SpinOkHttpUtils.postSessionEvent()
             SpinOkHttpUtils.getBlacklistData()
         }
@@ -111,6 +111,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     override fun onPostResume() {
         super.onPostResume()
         progressValueAnimator.resume()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        SpinUtils.toBuriedPointSpin("spi_zag")
     }
 
     override fun onDestroy() {

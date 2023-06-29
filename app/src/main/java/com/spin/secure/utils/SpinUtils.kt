@@ -10,6 +10,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.google.gson.reflect.TypeToken
 import com.spin.secure.*
+import com.spin.secure.ads.AdLoadUtils
 import com.spin.secure.ads.AdsCons
 import com.spin.secure.ads.MAd
 import com.spin.secure.bean.SpinIpBean
@@ -29,10 +30,14 @@ import kotlinx.coroutines.*
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.Charset
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 
 object SpinUtils {
     private var installReferrer: String = ""
     private val job = Job()
+
     /**
      * 下发服务器转换
      */
@@ -70,11 +75,11 @@ object SpinUtils {
                     }
                 }.toMutableList()
             } else {
-                KLog.e("TAG","获取下发服务器数据----->")
+                KLog.e("TAG", "获取下发服务器数据----->")
                 null
             }
         }.getOrElse {
-            KLog.e("TAG","获取下发服务器数据----->")
+            KLog.e("TAG", "获取下发服务器数据----->")
             null
         }
     }
@@ -96,12 +101,12 @@ object SpinUtils {
                     }
                 }.toMutableList()
             } else {
-                KLog.e("TAG","获取下发Fast服务器数据----->")
+                KLog.e("TAG", "获取下发Fast服务器数据----->")
                 null
 
             }
         }.getOrElse {
-            KLog.e("TAG","获取下发Fast服务器数据----->")
+            KLog.e("TAG", "获取下发Fast服务器数据----->")
             null
         }
     }
@@ -109,8 +114,8 @@ object SpinUtils {
     fun referrer(
         context: Context,
     ) {
-        installReferrer = "gclid"
-//        installReferrer = "fb4a"
+//        installReferrer = "gclid"
+        installReferrer = "fb4a"
         getAppMmkv().encode(Constant.INSTALL_REFERRER, installReferrer)
         try {
             val referrerClient = InstallReferrerClient.newBuilder(context).build()
@@ -128,6 +133,7 @@ object SpinUtils {
                             installReferrer =
                                 referrerClient.installReferrer.installReferrer ?: ""
 //                            getAppMmkv().encode(Constant.INSTALL_REFERRER, installReferrer)
+                            toBuriedPointSpin("spi_sob")
                             KLog.e("TAG", "installReferrer====${installReferrer}")
                             referrerClient.endConnection()
                             return
@@ -293,15 +299,12 @@ object SpinUtils {
     }
 
 
-
-
-
     fun getIpInformation() {
         val ipInfo = getIpInfoFromUrl("https://ip.seeip.org/geoip/")
         if (ipInfo.isNotEmpty()) {
-            getAppMmkv().encode(AdsCons.ip1,ipInfo)
+            getAppMmkv().encode(AdsCons.ip1, ipInfo)
         } else {
-            getAppMmkv().encode(AdsCons.ip1,"")
+            getAppMmkv().encode(AdsCons.ip1, "")
             getIpInformation2()
         }
     }
@@ -337,9 +340,109 @@ object SpinUtils {
     private fun getIpInformation2() {
         val ipInfo = getIpInfoFromUrl("https://api.myip.com/")
         if (ipInfo.isNotEmpty()) {
-            getAppMmkv().encode(AdsCons.ip2,ipInfo)
+            getAppMmkv().encode(AdsCons.ip2, ipInfo)
         } else {
             KLog.e("tab-ip", "Failed to retrieve IP information from the second URL")
         }
     }
+
+    /**
+     * 是否根据买量屏蔽
+     */
+    fun whetherBuyQuantityBan(): Boolean {
+        val localVpnBootData = getScenarioConfiguration()
+        KLog.e("logTagSpin", "cloak---${localVpnBootData.spin_lock}。。。")
+        if (!isBlockScreenAds(localVpnBootData.spin_show)) {
+            return true
+        }
+        return false
+    }
+
+    /**
+     * 是否根据黑名单屏蔽
+     */
+    fun whetherBlackListBan(): Boolean {
+        val localVpnBootData = getScenarioConfiguration()
+        val blacklistUser =
+            getAppMmkv().decodeBool(Constant.BLACKLIST_USER_SPIN, true)
+        KLog.e("logTagSpin", "cloak---${localVpnBootData.spin_lock}。。。")
+        KLog.e("logTagSpin", "blacklist_user---${blacklistUser}。。。")
+        if (blacklistUser && localVpnBootData.spin_lock == "1") {
+            return true
+        }
+        return false
+    }
+
+
+    //当日日期
+    var adDateSpin = ""
+
+
+    fun isAppOpenSameDaySpin() {
+        adDateSpin = Constant.currentSpinDate.asSpKeyAndExtract()
+        if (adDateSpin == "") {
+            getAppMmkv().encode(Constant.currentSpinDate, formatDateNow())
+        } else {
+            if (dateAfterTime(adDateSpin, formatDateNow())) {
+                getAppMmkv().encode(Constant.currentSpinDate, formatDateNow())
+                getAppMmkv().encode(Constant.clicksSpinCount, 0)
+                getAppMmkv().encode(Constant.showSpinCount, 0)
+            }
+        }
+    }
+
+
+    fun isThresholdReached(): Boolean {
+        val clicksCount = Constant.clicksSpinCount.asSpKeyInt()
+        val showCount = Constant.showSpinCount.asSpKeyInt()
+        if (clicksCount >= AdLoadUtils.getInstData().click_num || showCount >= AdLoadUtils.getInstData().show_num) {
+            return true
+        }
+        return false
+    }
+
+
+    fun recordNumberOfAdDisplaysSpin() {
+        var showCount = Constant.showSpinCount.asSpKeyInt()
+        showCount++
+        getAppMmkv().encode(Constant.showSpinCount, showCount)
+
+    }
+
+
+    fun recordNumberOfAdClickSpin() {
+        var clicksCount = Constant.clicksSpinCount.asSpKeyInt()
+        clicksCount++
+        getAppMmkv().encode(Constant.clicksSpinCount, clicksCount)
+    }
+
+
+    /**
+     * @return 当前日期
+     */
+    fun formatDateNow(): String? {
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val date = Date()
+        return simpleDateFormat.format(date)
+    }
+
+    //判断一个时间在另一个时间之后
+    fun dateAfterTime(startTime: String?, endTime: String?): Boolean {
+        val format = SimpleDateFormat("yyyy-MM-dd")
+        try {
+            val startDate: Date = format.parse(startTime)
+            val endDate: Date = format.parse(endTime)
+            val start: Long = startDate.getTime()
+            val end: Long = endDate.getTime()
+            if (end > start) {
+                return true
+            }
+        } catch (e: ParseException) {
+            e.printStackTrace()
+            return false
+        }
+        return false
+    }
+
+
 }

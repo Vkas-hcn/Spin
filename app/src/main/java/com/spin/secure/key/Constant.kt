@@ -52,4 +52,11 @@ object Constant {
     const val UUID_VALUE_SPIN = "uuidValueSpin"
     // Session Json
     const val SESSION_JSON_SPIN = "sessionJsonSpin"
+
+    // 当日日期
+    const val currentSpinDate="current_spin_date"
+    // 点击次数
+    const val clicksSpinCount="clicks_spin_count"
+    // 展示次数
+    const val showSpinCount="show_spin_count"
 }

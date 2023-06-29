@@ -11,6 +11,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.blankj.utilcode.util.NetworkUtils
+import com.github.shadowsocks.bg.BaseService
 import com.spin.secure.*
 import com.spin.secure.ads.AdLoadUtils
 import com.spin.secure.ads.AdsCons
@@ -18,6 +19,7 @@ import com.spin.secure.base.BaseViewModel
 import com.spin.secure.bean.SpinIp2Bean
 import com.spin.secure.bean.SpinIpBean
 import com.spin.secure.key.Constant
+import com.spin.secure.key.Constant.logTagSpin
 import com.spin.secure.main.core.ConnectState
 import com.spin.secure.main.core.ConnectState.*
 import com.spin.secure.main.core.IntentCons
@@ -28,6 +30,9 @@ import com.spin.secure.utils.KLog
 import com.spin.secure.utils.SpinUtils
 import com.xuexiang.xutil.XUtil
 import com.xuexiang.xutil.net.JsonUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 class SpinViewModel(application: Application) : BaseViewModel(application), BaseConnector.Callback {
@@ -95,12 +100,6 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
     }
 
     override fun onStateChanged(state: ConnectState) {
-        when (state) {
-            Connected -> SpinApp.isVpnGlobalLink = true
-            Stopped -> SpinApp.isVpnGlobalLink = false
-            else -> {
-            }
-        }
         stateText.value = state.text
     }
 
@@ -119,8 +118,12 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
         doOnConnector {
             if (isConnected()) return@doOnConnector
             checkPermission {
-                if (it) prepareToggleConnection(true)
-                else changeConnectDataReally()
+                if (it) {
+                    GlobalScope.launch(Dispatchers.IO) {
+                        start()
+                    }
+                    prepareToggleConnection(true)
+                } else changeConnectDataReally()
             }
         }
     }
@@ -133,6 +136,8 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
     }
 
     private fun closeConnection() {
+        KLog.e(logTagSpin, "断开前检测广告")
+        AdLoadUtils.disConnectLoadAllAd()
         prepareToggleConnection(false)
     }
 
@@ -154,19 +159,18 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
                 val progress = it.animatedValue as Int
                 if (progress in 20..99) {
                     AdLoadUtils.resultOf(AdsCons.POS_CONNECT)?.let { res ->
-                        KLog.e("TAG","doToggleConnection.value111111")
-
                         destroyConnectJob()
                         showConnectAd.value = ConnectAdParam(
                             forConnect = forConnect,
                             res = res,
                             next = { forConnect2 ->
+                                KLog.e("TAG", "forConnect2==${forConnect2}")
                                 doToggleConnection.value = forConnect2
-                                KLog.e("TAG","doToggleConnection.value222222")
                             }
                         )
                     }
                 } else if (progress >= 100) {
+                    KLog.e("TAG", "forConnect==${forConnect}")
                     doToggleConnection.value = forConnect
                 }
             }
@@ -208,13 +212,13 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
     fun onPause() {
         mConnectJob?.pause()
         mStartProgressJob?.pause()
-        KLog.e("TAG","onPause------->")
+        KLog.e("TAG", "onPause------->")
     }
 
     fun onResume() {
         mConnectJob?.resume()
         mStartProgressJob?.resume()
-        KLog.e("TAG","onResume------->")
+        KLog.e("TAG", "onResume------->")
 
     }
 
@@ -291,17 +295,19 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
             if (canStop()) closeConnection() else openConnection()
         }
     }
+
     /**
      * b方案链接VPN
      */
     fun linkVpn() {
         doOnConnector {
             if (!canStop()) {
-                SpinUtils.toBuriedPointSpin("spin_go")
+                SpinUtils.toBuriedPointSpin("spi_pint")
                 openConnection()
             }
         }
     }
+
     private fun doOnConnector(action: BaseConnector.() -> Unit) {
         mConnector?.let { action(it) }
     }
@@ -324,7 +330,7 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
             BaseConnector.state = Stopped
             if (!onDestroy) {
                 startConnectingAnimation.value = false
-                KLog.e("TAG","startConnectingAnimation---3")
+                KLog.e("TAG", "startConnectingAnimation---3")
 
                 startProgressAnimation(0, animated = false)
             }
@@ -332,12 +338,13 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
             BaseConnector.state = Connected
             if (!onDestroy) {
                 startConnectingAnimation.value = false
-                KLog.e("TAG","startConnectingAnimation---4")
+                KLog.e("TAG", "startConnectingAnimation---4")
 
                 startProgressAnimation(2, animated = false)
             }
         }
     }
+
     /**
      * 是否是买量用户
      */
@@ -398,11 +405,11 @@ class SpinViewModel(application: Application) : BaseViewModel(application), Base
         dialogVpn.getButton(DialogInterface.BUTTON_NEGATIVE)?.setTextColor(Color.BLACK)
     }
 
-    fun dialogDunUser(activity: AppCompatActivity):Boolean {
-        if (isIllegalIp()) {
-            whetherTheBulletBoxCannotBeUsed(activity)
-            return true
-        }
+    fun dialogDunUser(activity: AppCompatActivity): Boolean {
+//        if (isIllegalIp()) {
+//            whetherTheBulletBoxCannotBeUsed(activity)
+//            return true
+//        }
         return false
     }
 }

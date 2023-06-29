@@ -17,7 +17,11 @@ data class MAds(
     @Json(name = "si_b")
     val back: List<MAd> = emptyList(),
     @Json(name = "si_r")
-    val result: List<MAd> = emptyList()
+    val result: List<MAd> = emptyList(),
+    @Json(name = "si_plme")
+    val click_num:Int = 0,
+    @Json(name = "si_yioi")
+    val show_num:Int = 0,
 ) : Serializable
 
 @Keep

@@ -13,6 +13,7 @@ import com.spin.secure.click
 import com.spin.secure.databinding.ActivityConnResultBinding
 import com.spin.secure.isVisible
 import com.spin.secure.main.core.IntentCons
+import com.spin.secure.utils.SpinUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -88,6 +89,11 @@ class ConnectionResultActivity :
         resultAdJob = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        SpinUtils.toBuriedPointSpin("spi_fire")
+
+    }
     override fun onDestroy() {
         super.onDestroy()
         AdLoadUtils.unregisterTask(adTask)
