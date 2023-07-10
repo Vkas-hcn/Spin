@@ -208,9 +208,9 @@ object SpinUtils {
         val ipAfterVpnCity = Constant.IP_AFTER_VPN_CITY_SPIN.asSpKeyAndExtract()
 
         if (SpinApp.isVpnGlobalLink) {
-            setVpnGlobalLinkSettings(mAd, ipAfterVpnLink, ipAfterVpnCity)
+            setVpnGlobalLinkSettingsAfter(mAd, ipAfterVpnLink, ipAfterVpnCity)
         } else {
-            setNonVpnGlobalLinkSettings(mAd)
+            setNonVpnGlobalLinkSettingsAfter(mAd)
         }
 
         return mAd
@@ -225,6 +225,17 @@ object SpinUtils {
         val ip = getIpBean().ip.toString()
         mAd.spin_load_ip = ip
         mAd.spin_load_city = "null"
+    }
+
+    private fun setVpnGlobalLinkSettingsAfter(mAd: MAd, ipAfterVpnLink: String, ipAfterVpnCity: String) {
+        mAd.spin_show_ip = ipAfterVpnLink
+        mAd.spin_show_city = ipAfterVpnCity
+    }
+
+    private fun setNonVpnGlobalLinkSettingsAfter(mAd: MAd) {
+        val ip = getIpBean().ip.toString()
+        mAd.spin_show_ip = ip
+        mAd.spin_show_city = "null"
     }
 
 
