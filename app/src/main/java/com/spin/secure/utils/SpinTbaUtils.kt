@@ -92,6 +92,17 @@ object SpinTbaUtils {
         return topLevelJson.toString()
     }
 
+    //自定义广告收益埋点
+    fun customAdRevenueBurialPoint(value:Long,name:String): String {
+        val rubicund = JSONObject()
+        rubicund.put("value", value)
+        return getTopLevelJsonData().apply {
+            put("quota",name)
+        }.apply {
+            put("rubicund", rubicund)
+        }.toString()
+    }
+
     fun getAdJson(
         adValue: AdValue,
         responseInfo: ResponseInfo,

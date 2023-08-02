@@ -115,8 +115,8 @@ object SpinUtils {
         context: Context,
     ) {
 //        installReferrer = "gclid"
-        installReferrer = "fb4a"
-        getAppMmkv().encode(Constant.INSTALL_REFERRER, installReferrer)
+//        installReferrer = "fb4a"
+//        getAppMmkv().encode(Constant.INSTALL_REFERRER, installReferrer)
         try {
             val referrerClient = InstallReferrerClient.newBuilder(context).build()
             referrerClient.startConnection(object : InstallReferrerStateListener {
@@ -132,7 +132,7 @@ object SpinUtils {
                             }
                             installReferrer =
                                 referrerClient.installReferrer.installReferrer ?: ""
-//                            getAppMmkv().encode(Constant.INSTALL_REFERRER, installReferrer)
+                            getAppMmkv().encode(Constant.INSTALL_REFERRER, installReferrer)
                             toBuriedPointSpin("spi_sob")
                             KLog.e("TAG", "installReferrer====${installReferrer}")
                             referrerClient.endConnection()
@@ -287,6 +287,17 @@ object SpinUtils {
         }
 
         Firebase.analytics.logEvent(name, bundleOf("time" to time))
+    }
+    /**
+     * 埋点广告收益
+     */
+    fun toBuriedAdvertisingRevenue(name: String, value: Long) {
+        SpinOkHttpUtils.postAdPointReportingEvent(value,name)
+        if (BuildConfig.DEBUG) {
+            KLog.d(logTagSpin, "触发埋点----name=$name---value=$value")
+            return
+        }
+        Firebase.analytics.logEvent(name, bundleOf("value" to value))
     }
 
 

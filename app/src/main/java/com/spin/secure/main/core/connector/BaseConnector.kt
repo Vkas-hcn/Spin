@@ -210,8 +210,6 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
                     onConnected()
                     onStartResult(true)
                     SpinUtils.toBuriedPointSpin("spin_mop")
-                    //心跳上报
-                    getHeartbeatReportedConnect()
                 } else {
                     destroyConnectJob()
                     stop()
@@ -237,7 +235,6 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
         state = ConnectState.Stopped
         onDisconnected()
         onStartResult(false)
-        getHeartbeatReportedDisConnect()
     }
 
      fun onConnected() {
@@ -247,44 +244,5 @@ abstract class BaseConnector(protected val context: ComponentActivity) {
 
     private fun onDisconnected() {
         stopTimer(false)
-    }
-
-    /**
-     * 心跳上报(链接)
-     */
-    fun getHeartbeatReportedConnect() {
-        jobHeart?.cancel()
-        jobHeart = null
-        jobHeart = context.lifecycleScope.launch(Dispatchers.IO) {
-            while (isActive) {
-                var data: String
-                var ip: String
-                if (isConnected()) {
-                    data = "go"
-                    ip = Constant.IP_AFTER_VPN_LINK_SPIN.asSpKeyAndExtract()
-                } else {
-                    data = "ba"
-                    ip = Constant.CURRENT_IP_SPIN.asSpKeyAndExtract()
-                }
-                if (isConnected()) {
-                    SpinOkHttpUtils.getHeartbeatReporting(data, ip)
-                }
-                delay(60000)
-            }
-        }
-    }
-
-    /**
-     * 心跳上报(断开)
-     */
-    fun getHeartbeatReportedDisConnect() {
-        jobHeart?.cancel()
-        jobHeart = null
-        GlobalScope.launch(Dispatchers.IO) {
-            SpinOkHttpUtils.getHeartbeatReporting(
-                "ba",
-                Constant.CURRENT_IP_SPIN.asSpKeyAndExtract()
-            )
-        }
     }
 }

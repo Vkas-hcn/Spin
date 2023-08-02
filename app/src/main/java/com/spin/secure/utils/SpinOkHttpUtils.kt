@@ -104,8 +104,26 @@ object SpinOkHttpUtils {
                     KLog.e("TBA", "${adKey}广告事件上报-成功->")
 
                 } else {
-                    getAppMmkv().encode(Constant.INSTALL_TYPE_SPIN, false)
                     KLog.e("TBA", "${adType}广告事件上报-失败--")
+                }
+            }
+        }
+    }
+
+    /**
+     * 广告收益埋点事件上报
+     */
+    fun postAdPointReportingEvent(value:Long,name:String) {
+        val json = SpinTbaUtils.customAdRevenueBurialPoint(value,name)
+        KLog.e("TBA", "json-广告收益埋点--->${json}")
+        GlobalScope.launch(Dispatchers.IO) {
+            tryOkHttp("广告收益埋点上报-Exception") {
+                val response = NewHttpClient.post(urlTba, json)
+                if (response.statusCode == 200) {
+                    KLog.e("TBA", "广告收益埋点上报-成功->${response.body}")
+
+                } else {
+                    KLog.e("TBA", "广告收益埋点上报-失败--")
                 }
             }
         }
@@ -157,35 +175,6 @@ object SpinOkHttpUtils {
                 getAppMmkv().encode(Constant.SEND_SERVER_DATA, "")
                 KLog.e("TBA", "获取下发服务器数据-失败->${response.body}")
             }
-        }
-    }
-
-    /**
-     * 心跳上报
-     */
-    suspend fun getHeartbeatReporting(disaster: String, ss_ip: String) {
-        //包名
-        val halyards = AppUtils.getAppPackageName()
-        // 版本号
-        val action = AppUtils.getAppVersionName()
-        //设备ID
-        val mother = DeviceUtils.getAndroidID()
-        //协议名称
-        val windlasses = "SS"
-        val urlParams =
-            "https://${ss_ip}/qwq/sfg/?halyards=${halyards}&action=${action}&mother=$mother&disaster=$disaster&windlasses=$windlasses"
-
-        KLog.e("TBA", "心跳上报---urlParams=${urlParams}")
-        try {
-            val response = NewHttpClient.get(urlParams)
-            if (response.statusCode == 200) {
-                KLog.e("TBA", "心跳上报-成功->${response.body}")
-            } else {
-                KLog.e("TBA", "心跳上报-失败->${response.body}")
-            }
-
-        } catch (e: Exception) {
-            KLog.e("TBA", "心跳上报---Exception=${e}")
         }
     }
 }
