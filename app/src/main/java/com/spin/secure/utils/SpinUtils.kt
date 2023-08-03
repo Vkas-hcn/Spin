@@ -5,6 +5,7 @@ import android.util.Base64
 import androidx.core.os.bundleOf
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
+import com.facebook.appevents.AppEventsLogger
 import com.github.shadowsocks.database.ProfileManager
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
@@ -291,12 +292,14 @@ object SpinUtils {
     /**
      * 埋点广告收益
      */
-    fun toBuriedAdvertisingRevenue(name: String, value: Long) {
+    fun toBuriedAdvertisingRevenue(name: String, value: Long,context:Context) {
         SpinOkHttpUtils.postAdPointReportingEvent(value,name)
         if (BuildConfig.DEBUG) {
             KLog.d(logTagSpin, "触发埋点----name=$name---value=$value")
             return
         }
+        AppEventsLogger.newLogger(context).logPurchase(
+            (value /1000000.0).toBigDecimal(),Currency.getInstance("USD"))
         Firebase.analytics.logEvent(name, bundleOf("value" to value))
     }
 

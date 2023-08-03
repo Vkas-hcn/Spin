@@ -500,7 +500,7 @@ object AdLoadUtils {
                                         adValue,
                                         appOpenAd.responseInfo, myUnit_O, unit.way, where
                                     )
-                                    SpinUtils.toBuriedAdvertisingRevenue("spin_umf_oop",adValue.valueMicros)
+                                    SpinUtils.toBuriedAdvertisingRevenue("spin_umf_oop",adValue.valueMicros,context)
                                 }
                             }
                         })
@@ -542,7 +542,7 @@ object AdLoadUtils {
                                             interstitialAd.responseInfo, myUnit_B, unit.way, where
                                         )
                                     }
-                                    SpinUtils.toBuriedAdvertisingRevenue("spin_umf_oop",adValue.valueMicros)
+                                    SpinUtils.toBuriedAdvertisingRevenue("spin_umf_oop",adValue.valueMicros,context)
                                 }
                             }
                         }
@@ -568,7 +568,7 @@ object AdLoadUtils {
                                         it1, data, unit.way, where
                                     )
                                 }
-                                SpinUtils.toBuriedAdvertisingRevenue("spin_umf_oop",adValue.valueMicros)
+                                SpinUtils.toBuriedAdvertisingRevenue("spin_umf_oop",adValue.valueMicros,context)
                                 loadOf(where)
                             }
                         }
