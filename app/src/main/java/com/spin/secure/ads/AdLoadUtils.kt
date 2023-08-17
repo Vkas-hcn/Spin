@@ -319,7 +319,7 @@ object AdLoadUtils {
                 res = ""
                 return
             }
-            if (!isLoadType && where == AdsCons.POS_BACK && SpinUtils.whetherBuyQuantityBan()) {
+            if (!isLoadType && (where == AdsCons.POS_BACK || where == AdsCons.POS_CONNECT || where == AdsCons.POS_HOME) && SpinUtils.whetherBuyQuantityBan()) {
                 KLog.e(logTagSpin, "买量屏蔽用户不加载${where}广告")
                 res = ""
                 return
@@ -631,7 +631,7 @@ object AdLoadUtils {
                         callback.invoke()
                         return
                     }
-                    if (where == "si_b") {
+                    if (where == "si_b" || where == "si_c") {
                         if (SpinUtils.whetherBuyQuantityBan()) {
                             KLog.e("logTagSpin", "根据买量屏蔽插屏广告。。。")
                             callback.invoke()
@@ -657,6 +657,12 @@ object AdLoadUtils {
             callback: () -> Unit
         ) {
             val nativeAd = res as? NativeAd ?: return
+            if (where == "si_h") {
+                if (SpinUtils.whetherBuyQuantityBan()) {
+                    KLog.e("logTagSpin", "根据买量屏蔽home广告。。。")
+                    return
+                }
+            }
             nativeRoot.findViewById<View>(R.id.ad_cover)?.visibility = View.GONE
             val nativeAdView =
                 nativeRoot.findViewById<NativeAdView>(R.id.ad_view) ?: return

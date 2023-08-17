@@ -49,6 +49,12 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
         KLog.e(logTagSpin,"MainActivity")
         val data = model.dialogDunUser(this)
         if(data){return}
+        if (SpinUtils.whetherBuyQuantityBan()) {
+            binding.adView.visibility = View.GONE
+            binding.adCover.visibility = View.GONE
+        } else {
+            binding.adCover.visibility = View.VISIBLE
+        }
         with(binding) {
             BarUtils.addMarginTopEqualStatusBarHeight(topLayout)
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)

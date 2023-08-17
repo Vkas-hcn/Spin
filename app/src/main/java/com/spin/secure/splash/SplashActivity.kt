@@ -55,9 +55,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
         }
         start()
         lifecycleScope.launch(Dispatchers.IO) {
-            if(!NetworkUtils.isNetworkAvailable()){
-                return@launch
-            }
             SpinUtils.referrer(this@SplashActivity)
             runBlocking {
                 SpinOkHttpUtils.getDeliverData()

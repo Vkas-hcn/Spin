@@ -174,7 +174,6 @@ class VpnService : BaseVpnService(), BaseService.Interface {
 
         if (profile.ipv6) builder.addAddress(PRIVATE_VLAN6_CLIENT, 126)
 
-//        builder.addDisallowedApplication(packageName)
         BrandStrategy.brand(applicationContext, builder, packageName)
 
         when (profile.route) {

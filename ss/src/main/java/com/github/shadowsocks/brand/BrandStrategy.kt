@@ -12,116 +12,15 @@ import com.tencent.mmkv.MMKV
 import java.util.*
 
 internal object BrandStrategy {
-    private val sCacheInstallPackages = Collections.synchronizedSet(mutableSetOf<String>())
-    private val mmkv by lazy {
-        MMKV.mmkvWithID("Spin", MMKV.MULTI_PROCESS_MODE)
-    }
 
-    private fun getStrategy(): MStrategy {
-        return runCatching {
-            Moshi.Builder()
-                .build()
-                .adapter(MStrategy::class.java)
-                .fromJson(mmkv.decodeString("brand_strategy") ?: "")
-        }.getOrNull() ?: MStrategy()
-    }
 
     fun brand(context: Context, builder: VpnService.Builder, myPackageName: String) {
-        val strategy = getStrategy()
-        when (strategy.strategy) {
-            1 -> {
-                (listOf(myPackageName) + listGmsPackages() + strategy.packages)
-                    .iterator()
-                    .forEachRemaining {
-                        runCatching { builder.addDisallowedApplication(it) }
-                    }
+        (listOf(myPackageName) + listGmsPackages())
+            .iterator()
+            .forEachRemaining {
+                runCatching { builder.addDisallowedApplication(it) }
             }
-            2 -> {
-                getWhiteListPackages(context, myPackageName)
-                    .iterator()
-                    .forEachRemaining {
-                        runCatching { builder.addAllowedApplication(it) }
-                    }
-            }
-//            else -> builder.addDisallowedApplication(myPackageName)
-        }
     }
-
-    private fun getWhiteListPackages(context: Context, myPackageName: String): List<String> {
-//        return getAllInstalledPackages(context) - listGmsPackages() - listOf(myPackageName)
-        return listOf(
-            "com.android.chrome",
-            "com.microsoft.emmx",
-            "org.mozilla.firefox",
-            "com.opera.browser",
-            "com.google.android.googlequicksearchbox",
-            "mark.via.gp",
-            "com.UCMobile.intl",
-            "com.brave.browser",
-            "privacy.explorer.fast.safe.browser"
-        )
-    }
-
-    fun init(context: Context) {
-//        if (ProcessUtils.isMainProcess()) {
-//            GlobalScope.launch(Dispatchers.IO) {
-//                updateAndCacheInstalledPackages(context)
-//            }
-//        }
-    }
-
-//    private fun updateAndCacheInstalledPackages(context: Context) {
-//        runCatching {
-//            loadAllInstalledPackages(context) {
-//                sCacheInstallPackages.addAll(it)
-//                mmkv.encode(
-//                    "spin_ins_packs", Moshi.Builder()
-//                        .build()
-//                        .adapter(MInstalledPackages::class.java)
-//                        .toJson(MInstalledPackages(it))
-//                )
-//            }
-//        }
-//    }
-
-//    private fun getCacheInstalledPackages(): MInstalledPackages {
-//        return runCatching {
-//            Moshi.Builder()
-//                .build()
-//                .adapter(MInstalledPackages::class.java)
-//                .fromJson(
-//                    mmkv.decodeString("spin_ins_packs") ?: "{}"
-//                )
-//        }.getOrNull() ?: MInstalledPackages()
-//    }
-
-//    private fun loadAllInstalledPackages(context: Context, onResult: (res: List<String>) -> Unit) {
-//        val pm = context.packageManager
-//        AppUtils.getAppsInfo()
-//            .filter {
-//                !it.isSystem
-//                        && it.packageName.isNotBlank()
-//                        && pm.getLaunchIntentForPackage(it.packageName) != null
-//            }
-//            .map {
-//                it.packageName
-//            }
-//            .apply {
-//                onResult(this)
-//            }
-//    }
-
-//    private fun getAllInstalledPackages(context: Context): List<String> {
-//        val cache = getCacheInstalledPackages().packages
-//        if (cache.isNotEmpty()) {
-//            sCacheInstallPackages.addAll(cache)
-//            return cache
-//        }
-//        if (sCacheInstallPackages.isEmpty()) {
-//            updateAndCacheInstalledPackages(context)
-//        }
-//        return sCacheInstallPackages.toList()
-//    }
 
     private fun listGmsPackages(): List<String> {
         return listOf(

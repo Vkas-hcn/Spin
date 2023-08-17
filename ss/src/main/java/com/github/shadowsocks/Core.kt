@@ -145,7 +145,6 @@ object Core : Configuration.Provider {
             DataStore.publicStore.putLong(Key.assetUpdateTime, packageInfo.lastUpdateTime)
         }
         updateNotificationChannels()
-        BrandStrategy.init(app)
     }
 
     override fun getWorkManagerConfiguration() = Configuration.Builder().apply {
