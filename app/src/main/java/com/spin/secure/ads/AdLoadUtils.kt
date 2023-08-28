@@ -113,10 +113,10 @@ object AdLoadUtils {
 
     private fun preloadAds() {
         runCatching {
-            Load.of(AdsCons.POS_OPEN)?.load(isLoadType = SpinApp.isLoadBack)
-            Load.of(AdsCons.POS_HOME)?.load(isLoadType = SpinApp.isLoadBack)
-            Load.of(AdsCons.POS_CONNECT)?.load(isLoadType = SpinApp.isLoadBack)
-            Load.of(AdsCons.POS_RESULT)?.load(isLoadType = SpinApp.isLoadBack)
+            Load.of(AdsCons.POS_OPEN)?.load()
+            Load.of(AdsCons.POS_HOME)?.load()
+            Load.of(AdsCons.POS_CONNECT)?.load()
+            Load.of(AdsCons.POS_RESULT)?.load()
         }
     }
 
@@ -292,7 +292,6 @@ object AdLoadUtils {
             context: Context = SpinApp.self,
             requestCount: Int = 1,
             inst: MAds = AdLoadUtils.inst,
-            isLoadType: Boolean = false
         ) {
             SpinUtils.isAppOpenSameDaySpin()
 
@@ -319,12 +318,12 @@ object AdLoadUtils {
                 res = ""
                 return
             }
-            if (!isLoadType && (where == AdsCons.POS_BACK || where == AdsCons.POS_CONNECT || where == AdsCons.POS_HOME) && SpinUtils.whetherBuyQuantityBan()) {
+            if ((where == AdsCons.POS_BACK || where == AdsCons.POS_CONNECT || where == AdsCons.POS_HOME) && SpinUtils.whetherBuyQuantityBan()) {
                 KLog.e(logTagSpin, "买量屏蔽用户不加载${where}广告")
                 res = ""
                 return
             }
-            if (!isLoadType && (where == AdsCons.POS_BACK || where == AdsCons.POS_CONNECT) && SpinUtils.whetherBlackListBan()) {
+            if ((where == AdsCons.POS_BACK || where == AdsCons.POS_CONNECT) && SpinUtils.whetherBlackListBan()) {
                 KLog.e(logTagSpin, "黑名单用户不加载${where}广告")
                 res = ""
                 return

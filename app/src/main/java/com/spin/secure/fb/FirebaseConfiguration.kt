@@ -32,6 +32,8 @@ object FirebaseConfiguration {
                 Firebase.remoteConfig.getStringAndSave("si_saaa")
 
                 Firebase.remoteConfig.getStringAndSave(Constant.spin_config)
+                Firebase.remoteConfig.getStringAndSave(Constant.spin_roof)
+
             }
     }
 }

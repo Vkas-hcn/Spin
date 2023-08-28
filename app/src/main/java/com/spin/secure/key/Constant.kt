@@ -7,6 +7,7 @@ object Constant {
     const val spin_config = "spin_config"
     // vpn配置本地文件名
     const val VPN_BOOT_LOCAL_FILE_NAME_SPIN = "spin_remote.json"
+    const val spin_roofJson = "spin_roof.json"
     // Session Json
     const val INSTALL_TYPE_SPIN  = "installTypeSpin"
     //tba上报地址(测试)
@@ -59,4 +60,6 @@ object Constant {
     const val clicksSpinCount="clicks_spin_count"
     // 展示次数
     const val showSpinCount="show_spin_count"
+
+    const val spin_roof = "spin_roof"
 }

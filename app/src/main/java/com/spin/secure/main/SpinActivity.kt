@@ -271,6 +271,7 @@ class SpinActivity : BaseActivity<ActivitySpinBinding, SpinViewModel>() {
             whetherToImplementPlanA = true
             return
         }
+        if(SpinApp.isVpnGlobalLink){return}
         val data = bubbleConfig.spin_may
         if ((data).isEmpty()) {
             KLog.d(logTagSpin, "判断Vpn方案---默认")

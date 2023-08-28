@@ -1,7 +1,6 @@
 package com.spin.secure.utils
 
 import android.content.Context
-import android.util.Base64
 import androidx.core.os.bundleOf
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
@@ -16,15 +15,13 @@ import com.spin.secure.ads.AdsCons
 import com.spin.secure.ads.MAd
 import com.spin.secure.bean.SpinIpBean
 import com.spin.secure.bean.SpinRemoteBean
+import com.spin.secure.bean.SpinRoofBean
 import com.spin.secure.bean.SpinVpnBean
 import com.spin.secure.key.Constant
 import com.spin.secure.key.Constant.logTagSpin
 import com.spin.secure.main.core.MConnection
-import com.spin.secure.main.core.MConnectionLib
 import com.spin.secure.main.core.connector.ss.syncFromData
-import com.squareup.moshi.Json
 import com.xuexiang.xutil.net.JsonUtil
-import com.xuexiang.xutil.resource.ResourceUtils
 import com.xuexiang.xutil.resource.ResourceUtils.readStringFromAssert
 import com.xuexiang.xutil.security.Base64Utils
 import kotlinx.coroutines.*
@@ -37,11 +34,6 @@ import java.util.*
 
 object SpinUtils {
     private var installReferrer: String = ""
-    private val job = Job()
-
-    /**
-     * 下发服务器转换
-     */
     suspend fun deliverServerTransitions(): Boolean {
         val data = getDataFromTheServer()
         val dataFast = getDataFastServerData()
@@ -56,9 +48,6 @@ object SpinUtils {
         }
     }
 
-    /**
-     * 获取下发服务器数据
-     */
     fun getDataFromTheServer(): List<MConnection>? {
         val data = Constant.SEND_SERVER_DATA.asSpKeyAndExtract()
         return runCatching {
@@ -152,25 +141,7 @@ object SpinUtils {
         }
     }
 
-    fun isFacebookUser(): Boolean {
-        val referrer = Constant.INSTALL_REFERRER.asSpKeyAndExtract()
-        return referrer.contains("fb4a", true)
-                || referrer.contains("facebook", true)
-    }
 
-    fun isValuableUser(): Boolean {
-        val referrer = Constant.INSTALL_REFERRER.asSpKeyAndExtract()
-        KLog.e("state", "referrer==${referrer}")
-        return isFacebookUser()
-                || referrer.contains("gclid", true)
-                || referrer.contains("not%20set", true)
-                || referrer.contains("youtubeads", true)
-                || referrer.contains("%7B%22", true)
-    }
-
-    /**
-     * 获取方案配置
-     */
     fun getScenarioConfiguration(): SpinRemoteBean {
         val listType = object : TypeToken<SpinRemoteBean>() {}.type
         val data = Constant.spin_config.asSpKeyAndExtract()
@@ -185,9 +156,21 @@ object SpinUtils {
         )
     }
 
-    /**
-     * 加载前链接信息设置
-     */
+
+    private fun getObtainReferMask(): SpinRoofBean {
+        val listType = object : TypeToken<SpinRoofBean>() {}.type
+        return runCatching {
+            JsonUtil.fromJson<SpinRoofBean>(
+                Constant.spin_roof.asSpKeyAndExtract(),
+                listType
+            )
+        }.getOrNull() ?: JsonUtil.fromJson(
+            readStringFromAssert(Constant.spin_roofJson),
+            listType
+        )
+    }
+
+
     fun beforeLoadLinkSettingsBa(mAd: MAd): MAd {
         val ipAfterVpnLink = Constant.IP_AFTER_VPN_LINK_SPIN.asSpKeyAndExtract()
         val ipAfterVpnCity = Constant.IP_AFTER_VPN_CITY_SPIN.asSpKeyAndExtract()
@@ -201,9 +184,7 @@ object SpinUtils {
         return mAd
     }
 
-    /**
-     * 展示链接信息设置
-     */
+
     fun afterLoadLinkSettingsBa(mAd: MAd): MAd {
         val ipAfterVpnLink = Constant.IP_AFTER_VPN_LINK_SPIN.asSpKeyAndExtract()
         val ipAfterVpnCity = Constant.IP_AFTER_VPN_CITY_SPIN.asSpKeyAndExtract()
@@ -228,7 +209,11 @@ object SpinUtils {
         mAd.spin_load_city = "null"
     }
 
-    private fun setVpnGlobalLinkSettingsAfter(mAd: MAd, ipAfterVpnLink: String, ipAfterVpnCity: String) {
+    private fun setVpnGlobalLinkSettingsAfter(
+        mAd: MAd,
+        ipAfterVpnLink: String,
+        ipAfterVpnCity: String
+    ) {
         mAd.spin_show_ip = ipAfterVpnLink
         mAd.spin_show_city = ipAfterVpnCity
     }
@@ -240,9 +225,6 @@ object SpinUtils {
     }
 
 
-    /**
-     * 获取Ip Bean
-     */
     fun getIpBean(): SpinIpBean {
         val ip = (Constant.CURRENT_IP_SPIN).asSpKeyAndExtract()
         val baIpBean = SpinIpBean()
@@ -251,10 +233,25 @@ object SpinUtils {
 
     }
 
+    private fun isFacebookUser(): Boolean {
+        val data = getObtainReferMask()
+        val referrer = Constant.INSTALL_REFERRER.asSpKeyAndExtract()
+        return (data.spin_phanast == "1" && referrer.contains("fb4a", true))
+                || (data.spin_phanast == "1" && referrer.contains("facebook", true))
+    }
 
-    /**
-     * 是否屏蔽插屏广告
-     */
+    fun isValuableUser(): Boolean {
+        val data = getObtainReferMask()
+        val referrer = Constant.INSTALL_REFERRER.asSpKeyAndExtract()
+        return isFacebookUser()
+                || (data.spin_porcion == "1" && referrer.contains("gclid", true))
+                || (data.spin_compa == "1" && referrer.contains("not%20set", true))
+                || (data.spin_anyar == "1" && referrer.contains("youtubeads", true))
+                || (data.spin_easya == "1" && referrer.contains("%7B%22", true))
+                || (data.spin_aster == "1" && referrer.contains("adjust", true))
+                || (data.spin_cate == "1" && referrer.contains("bytedance", true))
+    }
+
     fun isBlockScreenAds(spinRef: String): Boolean {
         return when (spinRef) {
             "1" -> true
@@ -264,11 +261,6 @@ object SpinUtils {
             else -> true
         }
     }
-
-
-    /**
-     * 埋点
-     */
     fun toBuriedPointSpin(name: String) {
         if (BuildConfig.DEBUG) {
             KLog.d(logTagSpin, "触发埋点----name=$name")
@@ -278,9 +270,7 @@ object SpinUtils {
         Firebase.analytics.logEvent(name, null)
     }
 
-    /**
-     * 埋点连接时长
-     */
+
     fun toBuriedPointConnectionTimeSpin(name: String, time: Int) {
         if (BuildConfig.DEBUG) {
             KLog.d(logTagSpin, "触发埋点----name=$name---time=$time")
@@ -289,24 +279,20 @@ object SpinUtils {
 
         Firebase.analytics.logEvent(name, bundleOf("time" to time))
     }
-    /**
-     * 埋点广告收益
-     */
-    fun toBuriedAdvertisingRevenue(name: String, value: Long,context:Context) {
-        SpinOkHttpUtils.postAdPointReportingEvent(value,name)
+
+    fun toBuriedAdvertisingRevenue(name: String, value: Long, context: Context) {
+        SpinOkHttpUtils.postAdPointReportingEvent(value, name)
         if (BuildConfig.DEBUG) {
             KLog.d(logTagSpin, "触发埋点----name=$name---value=$value")
             return
         }
         AppEventsLogger.newLogger(context).logPurchase(
-            (value /1000000.0).toBigDecimal(),Currency.getInstance("USD"))
+            (value / 1000000.0).toBigDecimal(), Currency.getInstance("USD")
+        )
         Firebase.analytics.logEvent(name, bundleOf("value" to value))
     }
 
 
-    /**
-     * 下发结果解码
-     */
     fun splitIntoFour(input: String): String {
         val chunkSize = input.length / 4
         val parts = mutableListOf<String>()
@@ -371,9 +357,6 @@ object SpinUtils {
         }
     }
 
-    /**
-     * 是否根据买量屏蔽
-     */
     fun whetherBuyQuantityBan(): Boolean {
         val localVpnBootData = getScenarioConfiguration()
         KLog.e("logTagSpin", "cloak---${localVpnBootData.spin_lock}。。。")
@@ -383,9 +366,6 @@ object SpinUtils {
         return false
     }
 
-    /**
-     * 是否根据黑名单屏蔽
-     */
     fun whetherBlackListBan(): Boolean {
         val localVpnBootData = getScenarioConfiguration()
         val blacklistUser =
@@ -441,17 +421,12 @@ object SpinUtils {
         getAppMmkv().encode(Constant.clicksSpinCount, clicksCount)
     }
 
-
-    /**
-     * @return 当前日期
-     */
     fun formatDateNow(): String? {
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
         val date = Date()
         return simpleDateFormat.format(date)
     }
 
-    //判断一个时间在另一个时间之后
     fun dateAfterTime(startTime: String?, endTime: String?): Boolean {
         val format = SimpleDateFormat("yyyy-MM-dd")
         try {

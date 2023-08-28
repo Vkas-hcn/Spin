@@ -5,9 +5,9 @@ ext {
     android = [
             compileSdk : 31,
             minSdk     : 23,
-            targetSdk  : 31,
-            versionCode: 3,
-            versionName: "1.0.2"
+            targetSdk  : 33,
+            versionCode: 15,
+            versionName: "1.1.4"
     ]
     build = [
             gradleTool        : "com.android.tools.build:gradle:7.0.2",
