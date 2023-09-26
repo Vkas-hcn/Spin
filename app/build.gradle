@@ -3,8 +3,23 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
+    id 'stringfog'
 }
-
+// 导入RandomKeyGenerator类，如果使用HardCodeKeyGenerator，更换下类名
+import com.github.megatronking.stringfog.plugin.kg.RandomKeyGenerator
+import com.github.megatronking.stringfog.plugin.StringFogMode
+stringfog {
+    // 必要：加解密库的实现类路径，需和上面配置的加解密算法库一致。
+    implementation 'com.github.megatronking.stringfog.xor.StringFogImpl'
+    // 可选：加密开关，默认开启。
+    enable true
+    // 可选（3.0版本新增）：指定密钥生成器，默认使用长度8的随机密钥（每个字符串均有不同随机密钥）,
+    // 也可以指定一个固定的密钥：HardCodeKeyGenerator("This is a key")
+    kg new RandomKeyGenerator()
+    // 可选（4.0版本新增）：用于控制字符串加密后在字节码中的存在形式, 默认为base64，
+    // 也可以使用text或者bytes
+    mode StringFogMode.base64
+}
 android {
     compileSdk rootProject.ext.android.compileSdk
 
@@ -70,4 +85,7 @@ dependencies {
     implementation 'com.github.xuexiangjys.XUtil:xutil-core:2.0.0'
     implementation("com.squareup.okhttp3:okhttp:4.8.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.8.0")
+    implementation 'com.facebook.android:facebook-android-sdk:12.3.0'
+    implementation 'com.github.megatronking.stringfog:xor:4.0.1'
+
 }

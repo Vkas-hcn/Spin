@@ -39,7 +39,6 @@ object SpinOkHttpUtils {
                 getAppMmkv().encode(Constant.CURRENT_IP_SPIN, response.body.toString())
             } else {
                 KLog.e("TAG", "IP--code Exception")
-                getAppMmkv().encode(Constant.CURRENT_IP_SPIN, "")
             }
 
         }

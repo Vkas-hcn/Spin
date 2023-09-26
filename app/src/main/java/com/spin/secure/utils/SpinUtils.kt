@@ -315,7 +315,6 @@ object SpinUtils {
         if (ipInfo.isNotEmpty()) {
             getAppMmkv().encode(AdsCons.ip1, ipInfo)
         } else {
-            getAppMmkv().encode(AdsCons.ip1, "")
             getIpInformation2()
         }
     }

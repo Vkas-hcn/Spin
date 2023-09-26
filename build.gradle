@@ -12,6 +12,9 @@ buildscript {
         classpath rootProject.ext.build.gradleTool
         classpath rootProject.ext.build.kotlinGradlePlugin
         classpath rootProject.ext.build.rust
+        classpath 'com.github.megatronking.stringfog:gradle-plugin:4.0.1'
+        // 选用加解密算法库，默认实现了xor算法，也可以使用自己的加解密库。
+        classpath 'com.github.megatronking.stringfog:xor:4.0.1'
     }
 }
 
